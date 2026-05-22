@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Заказ {{ order.order_number }} — Админ{% endblock %}
+{% block content %}
+<div class="flex-between mb-16">
+  <div class="page-title" style="margin-bottom:0"><span>◈</span> {{ order.order_number }}</div>
+  <a href="{{ url_for('admin_orders') }}" class="btn btn-ghost btn-sm">← К списку</a>
+</div>
+<div class="vehicle-detail-grid" style="display:grid;grid-template-columns:1fr 300px;gap:20px">
+<div>
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">Работы и запчасти</div>
+    {% if items %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Наименование</th><th>Категория</th><th>Кол-во</th><th>Цена</th><th>Сумма</th></tr></thead>
+        <tbody>
+        {% for i in items %}
+        <tr>
+          <td>{{ i.service_name }}</td>
+          <td><span class="badge badge-gray">{{ i.category or '—' }}</span></td>
+          <td>{{ i.quantity }}</td>
+          <td>{{ "%.0f"|format(i.unit_price) }} ₽</td>
+          <td style="font-weight:600;color:var(--gold2)">{{ "%.0f"|format(i.total_price) }} ₽</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:right;margin-top:12px;font-size:18px;font-weight:700">
+      Итого: <span style="color:var(--gold2)">{{ "%.0f"|format(order.total_cost) }} ₽</span>
+    </div>
+    {% else %}<div class="empty-state"><p>Позиции не добавлены</p></div>{% endif %}
+  </div>
+  {% if order.description %}<div class="card"><div class="card-title" style="margin-bottom:8px">Жалоба / Описание</div>{{ order.description }}</div>{% endif %}
+  {% if order.notes %}<div class="card"><div class="card-title" style="margin-bottom:8px">Внутренние примечания</div><span class="text-gray">{{ order.notes }}</span></div>{% endif %}
+</div>
+<div>
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">Клиент</div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:4px">{{ order.client_name }}</div>
+    <div class="text-gray text-sm">{{ order.client_email }}</div>
+    <div class="text-gray text-sm">{{ order.client_phone or '—' }}</div>
+  </div>
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">Автомобиль</div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:6px">{{ order.brand }} {{ order.model }} {{ order.year or '' }}</div>
+    <div class="vin-tag">{{ order.vin }}</div>
+    <div class="text-gray text-sm" style="margin-top:6px">🪪 {{ order.license_plate or '—' }}</div>
+    {% if order.color %}<div class="text-gray text-sm">🎨 {{ order.color }}</div>{% endif %}
+  </div>
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">Детали заказа</div>
+    <div style="display:grid;gap:8px;font-size:13px">
+      <div class="flex-between"><span class="text-gray">Дата</span><span>{{ order.date }}</span></div>
+      {% if order.mileage %}<div class="flex-between"><span class="text-gray">Пробег</span><span>{{ "{:,}".format(order.mileage).replace(',','·') }} км</span></div>{% endif %}
+      {% if order.technician %}<div class="flex-between"><span class="text-gray">Техник</span><span>{{ order.technician }}</span></div>{% endif %}
+      <hr class="divider">
+      <div class="flex-between"><span class="text-gray">Статус</span>
+        {% if order.status=='completed' %}<span class="badge badge-green">Выполнен</span>
+        {% elif order.status=='in_progress' %}<span class="badge badge-gold">В работе</span>
+        {% elif order.status=='pending' %}<span class="badge badge-blue">Принят</span>
+        {% else %}<span class="badge badge-red">{{ order.status }}</span>{% endif %}
+      </div>
+    </div>
+    <hr class="divider">
+    <form method="POST" action="{{ url_for('admin_update_order_status', oid=order.id) }}" style="display:flex;gap:8px">
+      <select name="status" class="form-control">
+        <option value="pending" {{ 'selected' if order.status=='pending' }}>Принят</option>
+        <option value="in_progress" {{ 'selected' if order.status=='in_progress' }}>В работе</option>
+        <option value="completed" {{ 'selected' if order.status=='completed' }}>Выполнен</option>
+        <option value="cancelled" {{ 'selected' if order.status=='cancelled' }}>Отменён</option>
+      </select>
+      <button type="submit" class="btn btn-primary btn-sm">✓</button>
+    </form>
+  </div>
+</div>
+</div>
+{% endblock %}

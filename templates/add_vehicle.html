@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% block title %}Добавить автомобиль{% endblock %}
+{% block content %}
+<div style="max-width:700px">
+  <div class="page-title"><span>◈</span> Добавить автомобиль</div>
+  <div class="card">
+    <form method="POST" id="vehicle-form">
+
+      <!-- VIN field with live decoder -->
+      <div class="form-group">
+        <label class="form-label">VIN-код * (17 символов)</label>
+        <div style="position:relative">
+          <input type="text" name="vin" id="vin-input" class="form-control" required
+                 maxlength="17" minlength="17"
+                 placeholder="Введите 17-значный VIN..."
+                 style="font-family:monospace;letter-spacing:.12em;text-transform:uppercase;padding-right:120px"
+                 oninput="this.value=this.value.toUpperCase();onVinInput(this.value)">
+          <div id="vin-spinner" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);display:none;font-size:12px;color:var(--text2)">⏳</div>
+          <div id="vin-status" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;display:none"></div>
+        </div>
+        <div class="text-sm text-gray" style="margin-top:4px">Указан в СТС и на табличке в дверном проёме. VIN автоматически определит марку.</div>
+
+        <!-- VIN Decode Result Card -->
+        <div id="vin-result-card" style="display:none;margin-top:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 16px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div id="vin-brand-badge" style="font-family:var(--font-head);font-size:12px;letter-spacing:.08em;background:var(--red);color:#fff;padding:4px 12px;border-radius:20px"></div>
+            <div id="vin-country" style="font-size:12px;color:var(--text2)"></div>
+            <div id="vin-wmi" style="font-family:monospace;font-size:11px;background:var(--bg2);padding:3px 8px;border-radius:4px;color:var(--gold2)"></div>
+          </div>
+          <div id="vin-models" style="margin-top:8px;font-size:12px;color:var(--text2)"></div>
+          <div id="vin-info" style="margin-top:4px;font-size:11px;color:var(--text3)"></div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Марка *</label>
+          <select name="brand" id="brand-select" class="form-control" required>
+            <option value="">Выберите или введите VIN ↑</option>
+            {% for b in brands %}<option value="{{ b }}">{{ b }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Модель *</label>
+          <input type="text" name="model" id="model-input" class="form-control" required placeholder="L9, 001, Coolray...">
+        </div>
+      </div>
+
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">Год выпуска</label>
+          <input type="number" name="year" id="year-input" class="form-control" min="2018" max="2026" placeholder="2024">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Цвет</label>
+          <input type="text" name="color" class="form-control" placeholder="Белый...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Гос. номер</label>
+          <input type="text" name="license_plate" class="form-control" placeholder="А000АА777" style="text-transform:uppercase">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Текущий пробег (км)</label>
+        <input type="number" name="mileage" class="form-control" min="0" placeholder="0">
+      </div>
+
+      <hr class="divider">
+      <div class="card-title" style="margin-bottom:14px">🇨🇳 Китайский номерной знак</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Номер</label>
+          <input type="text" name="chinese_number" class="form-control" placeholder="粤A·12345">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Срок действия регистрации</label>
+          <input type="date" name="chinese_number_expiry" class="form-control">
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="card-title" style="margin-bottom:14px">📱 РФ SIM-карта (встроенная)</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Номер телефона</label>
+          <input type="text" name="rf_sim_number" class="form-control" placeholder="+7 900 000-00-00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Оператор</label>
+          <select name="rf_sim_operator" class="form-control">
+            <option value="">Выберите</option>
+            <option>МТС</option><option>Билайн</option><option>МегаФон</option>
+            <option>Tele2</option><option>Yota</option><option>СберМобайл</option><option>Другой</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Дата последнего пополнения</label>
+          <input type="date" name="rf_sim_topup_date" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Интервал пополнения (дней)</label>
+          <input type="number" name="rf_sim_topup_days" class="form-control" value="30" min="1" max="365">
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="card-title" style="margin-bottom:14px">🇨🇳 eSender SIM (китайская)</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Номер / ID eSender</label>
+          <input type="text" name="esender_number" class="form-control" placeholder="+86 или ID">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Дата последнего пополнения</label>
+          <input type="date" name="esender_topup_date" class="form-control">
+        </div>
+      </div>
+      <div class="form-group" style="max-width:200px">
+        <label class="form-label">Интервал пополнения (дней)</label>
+        <input type="number" name="esender_topup_days" class="form-control" value="30" min="1" max="365">
+      </div>
+
+      <hr class="divider">
+      <div class="form-group">
+        <label class="form-label">Примечания</label>
+        <textarea name="notes" class="form-control" placeholder="Дополнительная информация..."></textarea>
+      </div>
+      <div class="flex gap-8">
+        <button type="submit" class="btn btn-primary">Сохранить автомобиль</button>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-ghost">Отмена</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Year from VIN position 10
+const VIN_YEAR_MAP = {
+  'A':2010,'B':2011,'C':2012,'D':2013,'E':2014,'F':2015,'G':2016,
+  'H':2017,'J':2018,'K':2019,'L':2020,'M':2021,'N':2022,'P':2023,
+  'R':2024,'S':2025,'T':2026,'V':2027,'W':2028,'X':2029,'Y':2030
+};
+
+let decodeTimer = null;
+
+function onVinInput(val) {
+  const spinner = document.getElementById('vin-spinner');
+  const status  = document.getElementById('vin-status');
+  const card    = document.getElementById('vin-result-card');
+
+  // Auto-fill year from VIN char 10
+  if (val.length >= 10) {
+    const yrChar = val[9];
+    const yr = VIN_YEAR_MAP[yrChar];
+    if (yr) {
+      const yf = document.getElementById('year-input');
+      if (!yf.value) yf.value = yr;
+    }
+  }
+
+  if (val.length !== 17) {
+    card.style.display = 'none';
+    status.style.display = 'none';
+    return;
+  }
+
+  spinner.style.display = 'block';
+  status.style.display = 'none';
+  clearTimeout(decodeTimer);
+
+  decodeTimer = setTimeout(async () => {
+    try {
+      const resp = await fetch('/api/vin/decode?vin=' + encodeURIComponent(val));
+      const d = await resp.json();
+      spinner.style.display = 'none';
+
+      if (!d.valid) {
+        status.textContent = '✗ ' + (d.info || 'Неверный VIN');
+        status.style.color = 'var(--red)';
+        status.style.display = 'block';
+        card.style.display = 'none';
+        return;
+      }
+
+      status.textContent = '✓ OK';
+      status.style.color = 'var(--success)';
+      status.style.display = 'block';
+
+      // Show result card
+      if (d.brand) {
+        document.getElementById('vin-brand-badge').textContent = d.brand;
+        document.getElementById('vin-country').textContent = '🌏 ' + (d.country || '');
+        document.getElementById('vin-wmi').textContent = 'WMI: ' + (d.wmi || '');
+        if (d.models && d.models.length > 0) {
+          document.getElementById('vin-models').textContent = 'Возможные модели: ' + d.models.join(', ');
+        } else {
+          document.getElementById('vin-models').textContent = '';
+        }
+        document.getElementById('vin-info').textContent = d.info || '';
+        card.style.display = 'block';
+
+        // Auto-fill brand select
+        const sel = document.getElementById('brand-select');
+        const opts = Array.from(sel.options);
+        // Try exact match first
+        let matched = opts.find(o => o.value.toLowerCase() === d.brand.toLowerCase());
+        if (!matched) {
+          // Try partial (e.g. "SAIC MG" → "SAIC")
+          matched = opts.find(o => d.brand.toLowerCase().startsWith(o.value.toLowerCase()) || o.value.toLowerCase().startsWith(d.brand.toLowerCase()));
+        }
+        if (matched) {
+          sel.value = matched.value;
+          // Pulse the select to show it was auto-filled
+          sel.style.transition = '.3s';
+          sel.style.borderColor = 'var(--success)';
+          setTimeout(() => sel.style.borderColor = '', 2000);
+        }
+      } else {
+        document.getElementById('vin-brand-badge').textContent = 'Неизвестный WMI';
+        document.getElementById('vin-brand-badge').style.background = 'var(--text3)';
+        document.getElementById('vin-country').textContent = d.country ? '🌏 ' + d.country : '';
+        document.getElementById('vin-wmi').textContent = 'WMI: ' + (d.wmi || '');
+        document.getElementById('vin-models').textContent = '';
+        document.getElementById('vin-info').textContent = d.info || '';
+        card.style.display = 'block';
+      }
+    } catch(e) {
+      spinner.style.display = 'none';
+    }
+  }, 400);
+}
+</script>
+{% endblock %}

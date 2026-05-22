@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Заказ {{ order.order_number }}{% endblock %}
+{% block content %}
+<div class="flex-between mb-16">
+  <div class="page-title" style="margin-bottom:0"><span>◈</span> {{ order.order_number }}</div>
+  <a href="{{ url_for('vehicle_detail', vid=order.vehicle_id) }}" class="btn btn-ghost btn-sm">← К автомобилю</a>
+</div>
+<div style="display:grid;grid-template-columns:1fr 280px;gap:20px">
+<div>
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">Выполненные работы и запчасти</div>
+    {% if items %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Наименование</th><th>Категория</th><th>Кол-во</th><th>Цена</th><th>Сумма</th></tr></thead>
+        <tbody>
+        {% for i in items %}
+        <tr>
+          <td>{{ i.service_name }}</td>
+          <td><span class="badge badge-gray">{{ i.category or '—' }}</span></td>
+          <td>{{ i.quantity }}</td>
+          <td>{{ "%.0f"|format(i.unit_price) }} ₽</td>
+          <td style="font-weight:600;color:var(--gold2)">{{ "%.0f"|format(i.total_price) }} ₽</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:right;margin-top:12px;font-size:18px;font-weight:700">
+      Итого: <span style="color:var(--gold2)">{{ "%.0f"|format(order.total_cost) }} ₽</span>
+    </div>
+    {% else %}
+    <div class="empty-state"><div class="icon">📋</div><p>Позиции не добавлены</p></div>
+    {% endif %}
+  </div>
+  {% if order.description %}
+  <div class="card"><div class="card-title" style="margin-bottom:8px">Описание</div>{{ order.description }}</div>
+  {% endif %}
+  {% if order.notes %}
+  <div class="card"><div class="card-title" style="margin-bottom:8px">Примечания</div><span class="text-gray">{{ order.notes }}</span></div>
+  {% endif %}
+</div>
+<div>
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">Информация</div>
+    <div style="display:grid;gap:10px;font-size:13px">
+      <div class="flex-between"><span class="text-gray">Автомобиль</span><span>{{ order.brand }} {{ order.model }}</span></div>
+      <div class="flex-between"><span class="text-gray">VIN</span><span class="vin-tag" style="font-size:11px">{{ order.vin }}</span></div>
+      <div class="flex-between"><span class="text-gray">Дата</span><span>{{ order.date }}</span></div>
+      {% if order.mileage %}<div class="flex-between"><span class="text-gray">Пробег</span><span>{{ "{:,}".format(order.mileage).replace(',','·') }} км</span></div>{% endif %}
+      {% if order.technician %}<div class="flex-between"><span class="text-gray">Техник</span><span>{{ order.technician }}</span></div>{% endif %}
+      <hr class="divider">
+      <div class="flex-between"><span class="text-gray">Статус</span>
+        {% if order.status == 'completed' %}<span class="badge badge-green">Выполнен</span>
+        {% elif order.status == 'in_progress' %}<span class="badge badge-gold">В работе</span>
+        {% elif order.status == 'pending' %}<span class="badge badge-blue">Принят</span>
+        {% else %}<span class="badge badge-gray">{{ order.status }}</span>{% endif %}
+      </div>
+      <div class="flex-between" style="font-size:16px;font-weight:700">
+        <span class="text-gray">Итого</span>
+        <span style="color:var(--gold2)">{{ "%.0f"|format(order.total_cost) }} ₽</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

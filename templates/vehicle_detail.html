@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+{% block title %}{{ vehicle.brand }} {{ vehicle.model }} — ChinAuto{% endblock %}
+{% block content %}
+<!-- Header -->
+<div class="flex-between mb-16">
+  <div>
+    <div class="page-title" style="margin-bottom:6px"><span>◈</span> {{ vehicle.brand }} {{ vehicle.model }}</div>
+    <div class="flex gap-8" style="align-items:center;flex-wrap:wrap">
+      <span class="vin-tag">{{ vehicle.vin }}</span>
+      {% if vehicle.license_plate %}<span class="badge badge-gray">🪪 {{ vehicle.license_plate }}</span>{% endif %}
+      {% if vehicle.year %}<span class="badge badge-gray">{{ vehicle.year }} г.</span>{% endif %}
+    </div>
+  </div>
+  <div class="flex gap-8">
+    <a href="{{ url_for('edit_vehicle', vid=vehicle.id) }}" class="btn btn-ghost btn-sm">✏️ Редактировать</a>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-ghost btn-sm">← Назад</a>
+  </div>
+</div>
+
+<div class="vehicle-detail-grid" style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">
+<div>
+
+<!-- Service history -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">История обслуживания</div>
+  </div>
+  {% if orders %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>№ Заказа</th><th>Дата</th><th>Пробег</th><th>Работ</th><th>Сумма</th><th>Статус</th>
+      </tr></thead>
+      <tbody>
+      {% for o in orders %}
+      <tr>
+        <td><a href="{{ url_for('order_detail', oid=o.id) }}" style="color:var(--gold2)">{{ o.order_number }}</a></td>
+        <td>{{ o.date }}</td>
+        <td>{% if o.mileage %}{{ "{:,}".format(o.mileage).replace(',','·') }} км{% else %}—{% endif %}</td>
+        <td>{{ o.items_count }}</td>
+        <td>{{ "%.0f"|format(o.total_cost) }} ₽</td>
+        <td>
+          {% if o.status == 'completed' %}<span class="badge badge-green">Выполнен</span>
+          {% elif o.status == 'in_progress' %}<span class="badge badge-gold">В работе</span>
+          {% elif o.status == 'pending' %}<span class="badge badge-blue">Принят</span>
+          {% else %}<span class="badge badge-gray">{{ o.status }}</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><div class="icon">📋</div><p>История обслуживания пуста</p></div>
+  {% endif %}
+</div>
+
+<!-- Maintenance schedule -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Рекомендуемый регламент — {{ vehicle.brand }}</div>
+  </div>
+  {% if schedule %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Работа</th><th>Категория</th><th>Интервал км</th><th>Интервал мес.</th><th>Приоритет</th></tr></thead>
+      <tbody>
+      {% for s in schedule %}
+      <tr>
+        <td>
+          {{ s.work_name }}
+          {% if s.description %}<br><span class="text-gray text-sm">{{ s.description }}</span>{% endif %}
+        </td>
+        <td><span class="badge badge-gray">{{ s.category }}</span></td>
+        <td>{% if s.interval_km %}{{ "{:,}".format(s.interval_km).replace(',','·') }}{% else %}—{% endif %}</td>
+        <td>{% if s.interval_months %}{{ s.interval_months }}{% else %}—{% endif %}</td>
+        <td>
+          {% if s.priority == 'high' %}<span class="badge badge-red">Важно</span>
+          {% else %}<span class="badge badge-gray">Обычный</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><div class="icon">🔧</div><p>Регламент для данной марки не загружен</p></div>
+  {% endif %}
+</div>
+
+</div>
+<div>
+
+<!-- Vehicle info -->
+<div class="card">
+  <div class="card-title" style="margin-bottom:14px">Информация об автомобиле</div>
+  <div style="display:grid;gap:10px">
+    <div class="flex-between" style="font-size:13px">
+      <span class="text-gray">Марка/Модель</span>
+      <span>{{ vehicle.brand }} {{ vehicle.model }}</span>
+    </div>
+    {% if vehicle.year %}
+    <div class="flex-between" style="font-size:13px">
+      <span class="text-gray">Год</span><span>{{ vehicle.year }}</span>
+    </div>
+    {% endif %}
+    {% if vehicle.color %}
+    <div class="flex-between" style="font-size:13px">
+      <span class="text-gray">Цвет</span><span>{{ vehicle.color }}</span>
+    </div>
+    {% endif %}
+    {% if vehicle.mileage %}
+    <div class="flex-between" style="font-size:13px">
+      <span class="text-gray">Пробег</span>
+      <span>{{ "{:,}".format(vehicle.mileage).replace(',','·') }} км</span>
+    </div>
+    {% endif %}
+    {% if vehicle.notes %}
+    <hr class="divider">
+    <div style="font-size:13px;color:var(--text2)">{{ vehicle.notes }}</div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Chinese number -->
+{% if vehicle.chinese_number %}
+<div class="card cn-timer{% if cn_days is not none and cn_days < 90 %} warn{% endif %}{% if cn_days is not none and cn_days < 30 %} danger{% endif %}">
+  <div class="card-title" style="margin-bottom:10px">🇨🇳 Китайский номер</div>
+  <div style="font-size:20px;font-weight:700;letter-spacing:.08em;margin-bottom:8px">{{ vehicle.chinese_number }}</div>
+  {% if vehicle.chinese_number_expiry %}
+  <div class="text-gray text-sm">Срок действия до: {{ vehicle.chinese_number_expiry }}</div>
+  {% if cn_days is not none %}
+    {% if cn_days < 0 %}
+      <div class="text-red" style="margin-top:6px;font-weight:600">⚠️ Срок истёк {{ -cn_days }} дней назад!</div>
+    {% elif cn_days < 30 %}
+      <div class="text-red" style="margin-top:6px;font-weight:600">⚠️ Осталось {{ cn_days }} дней!</div>
+    {% elif cn_days < 90 %}
+      <div style="color:var(--warn);margin-top:6px;font-weight:600">⏰ Осталось {{ cn_days }} дней</div>
+    {% else %}
+      <div class="text-green" style="margin-top:6px">✓ Осталось {{ cn_days }} дней</div>
+    {% endif %}
+  {% endif %}
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- RF SIM Card -->
+{% macro sim_days_badge(days) %}
+  {% if days is none %}<span class="badge badge-gray">Нет данных</span>
+  {% elif days < 0 %}<span class="badge badge-red">Просрочено {{ -days }} дн.</span>
+  {% elif days == 0 %}<span class="badge badge-red">Сегодня!</span>
+  {% elif days == 1 %}<span class="badge badge-red">Завтра!</span>
+  {% elif days <= 7 %}<span class="badge badge-gold">{{ days }} дн.</span>
+  {% elif days <= 30 %}<span style="color:var(--warn);font-weight:600;font-size:12px">{{ days }} дн.</span>
+  {% else %}<span class="text-green" style="font-size:12px;font-weight:600">{{ days }} дн.</span>
+  {% endif %}
+{% endmacro %}
+
+{% if vehicle.rf_sim_number %}
+<div class="card" style="border-left:3px solid {% if rf_sim_days is not none and rf_sim_days <= 1 %}var(--red){% elif rf_sim_days is not none and rf_sim_days <= 7 %}var(--warn){% else %}var(--border){% endif %}">
+  <div class="flex-between" style="margin-bottom:12px">
+    <div class="card-title">📱 РФ SIM-карта</div>
+    {% if rf_sim_days is not none and rf_sim_days <= 1 %}
+    <span style="font-size:18px;animation:pulse 1s infinite">🔴</span>
+    {% endif %}
+  </div>
+  <div style="display:grid;gap:8px;font-size:13px">
+    <div class="flex-between">
+      <span class="text-gray">Номер</span>
+      <span style="font-weight:600">{{ vehicle.rf_sim_number }}</span>
+    </div>
+    {% if vehicle.rf_sim_operator %}
+    <div class="flex-between">
+      <span class="text-gray">Оператор</span>
+      <span>{{ vehicle.rf_sim_operator }}</span>
+    </div>
+    {% endif %}
+    {% if vehicle.rf_sim_topup_date %}
+    <div class="flex-between">
+      <span class="text-gray">Последнее пополнение</span>
+      <span>{{ vehicle.rf_sim_topup_date }}</span>
+    </div>
+    {% if rf_sim_due %}
+    <div class="flex-between">
+      <span class="text-gray">Следующее</span>
+      <strong>{{ rf_sim_due }}</strong>
+    </div>
+    <div class="flex-between">
+      <span class="text-gray">Осталось</span>
+      {{ sim_days_badge(rf_sim_days) }}
+    </div>
+    {% endif %}
+    {% endif %}
+  </div>
+  <!-- Quick topup form -->
+  <details style="margin-top:14px">
+    <summary style="cursor:pointer;font-size:12px;color:var(--text2);list-style:none;display:flex;align-items:center;gap:6px">
+      <span>▶</span> Зафиксировать пополнение
+    </summary>
+    <form method="POST" action="{{ url_for('sim_topup', vid=vehicle.id) }}" style="margin-top:12px;display:grid;gap:10px">
+      <input type="hidden" name="sim_type" value="rf">
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Дата пополнения</label>
+          <input type="date" name="topup_date" class="form-control" value="{{ today_str }}">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Интервал (дней)</label>
+          <input type="number" name="topup_days" class="form-control" value="{{ vehicle.rf_sim_topup_days or 30 }}" min="1" max="365">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Сумма (₽)</label>
+          <input type="number" name="amount" class="form-control" placeholder="0.00" step="0.01">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Примечание</label>
+          <input type="text" name="note" class="form-control" placeholder="Необязательно">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">✓ Пополнил</button>
+    </form>
+  </details>
+</div>
+{% endif %}
+
+<!-- eSender SIM Card -->
+{% if vehicle.esender_number %}
+<div class="card" style="border-left:3px solid {% if esender_days is not none and esender_days <= 1 %}var(--red){% elif esender_days is not none and esender_days <= 7 %}var(--warn){% else %}var(--border){% endif %}">
+  <div class="flex-between" style="margin-bottom:12px">
+    <div class="card-title">🇨🇳 eSender SIM</div>
+    {% if esender_days is not none and esender_days <= 1 %}
+    <span style="font-size:18px;animation:pulse 1s infinite">🔴</span>
+    {% endif %}
+  </div>
+  <div style="display:grid;gap:8px;font-size:13px">
+    <div class="flex-between">
+      <span class="text-gray">Номер / ID</span>
+      <span style="font-weight:600">{{ vehicle.esender_number }}</span>
+    </div>
+    {% if vehicle.esender_topup_date %}
+    <div class="flex-between">
+      <span class="text-gray">Последнее пополнение</span>
+      <span>{{ vehicle.esender_topup_date }}</span>
+    </div>
+    {% if esender_due %}
+    <div class="flex-between">
+      <span class="text-gray">Следующее</span>
+      <strong>{{ esender_due }}</strong>
+    </div>
+    <div class="flex-between">
+      <span class="text-gray">Осталось</span>
+      {{ sim_days_badge(esender_days) }}
+    </div>
+    {% endif %}
+    {% endif %}
+  </div>
+  <details style="margin-top:14px">
+    <summary style="cursor:pointer;font-size:12px;color:var(--text2);list-style:none;display:flex;align-items:center;gap:6px">
+      <span>▶</span> Зафиксировать пополнение
+    </summary>
+    <form method="POST" action="{{ url_for('sim_topup', vid=vehicle.id) }}" style="margin-top:12px;display:grid;gap:10px">
+      <input type="hidden" name="sim_type" value="esender">
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Дата пополнения</label>
+          <input type="date" name="topup_date" class="form-control" value="{{ today_str }}">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Интервал (дней)</label>
+          <input type="number" name="topup_days" class="form-control" value="{{ vehicle.esender_topup_days or 30 }}" min="1" max="365">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Сумма (₽)</label>
+          <input type="number" name="amount" class="form-control" placeholder="0.00" step="0.01">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Примечание</label>
+          <input type="text" name="note" class="form-control" placeholder="Необязательно">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">✓ Пополнил</button>
+    </form>
+  </details>
+</div>
+{% endif %}
+
+<!-- SIM Topup History -->
+{% if sim_history %}
+<div class="card">
+  <div class="card-title" style="margin-bottom:12px">История пополнений SIM</div>
+  {% for h in sim_history %}
+  <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
+    <span>{{ '📱' if h.sim_type == 'rf' else '🇨🇳' }}</span>
+    <span style="font-weight:500">{{ 'РФ SIM' if h.sim_type == 'rf' else 'eSender' }}</span>
+    <span class="text-gray">{{ h.topup_date }}</span>
+    {% if h.amount %}<span style="color:var(--gold2);margin-left:auto">{{ "%.0f"|format(h.amount) }} ₽</span>{% endif %}
+    {% if h.next_topup %}<span class="text-gray">→ {{ h.next_topup }}</span>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Recalls -->
+{% if recalls %}
+<div class="card">
+  <div class="card-title" style="margin-bottom:14px">⚠️ Отзывные кампании ({{ recalls|length }})</div>
+  {% for r in recalls %}
+  <div style="padding:12px;background:rgba(243,156,18,.05);border:1px solid rgba(243,156,18,.2);border-radius:8px;margin-bottom:8px">
+    <div style="font-size:13px;font-weight:600;color:var(--warn);margin-bottom:4px">{{ r.title }}</div>
+    <div class="text-gray text-sm">{{ r.description }}</div>
+    <div class="text-sm text-gray" style="margin-top:6px">{{ r.issue_date }}
+      {% if r.official_url %} · <a href="{{ r.official_url }}" target="_blank" style="color:var(--info)">Подробнее →</a>{% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+</div>
+</div>
+{% endblock %}

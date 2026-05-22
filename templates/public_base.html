@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>{% block title %}ChinAuto Service{% endblock %}</title>
+
+<!-- PWA & Apple Home Screen -->
+<meta name="application-name" content="ChinAuto">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ChinAuto">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e63946" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#d62839" media="(prefers-color-scheme: light)">
+<meta name="description" content="Сервис для владельцев китайских автомобилей — история ТО, SIM-карты, отзывные кампании">
+
+<!-- Icons -->
+<link rel="icon" type="image/svg+xml" href="/static/icon.svg">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/static/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="/static/manifest.json">
+
+<!-- Apple Splash Screens (dark) -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── VARIABLES ─────────────────────────────────────────────────────── */
+:root{
+  --bg:#08090c;--bg2:#0f1116;--bg3:#161920;--bg4:#1c2030;
+  --red:#e63946;--red2:#ff4d5a;--red-dim:rgba(230,57,70,.12);
+  --gold:#c9a84c;--gold2:#f0c96a;--gold-dim:rgba(201,168,76,.12);
+  --text:#e8eaf0;--text2:#8b8fa8;--text3:#4a4f66;
+  --border:#1a1e2e;--border2:#252a3d;
+  --success:#2ecc71;--warn:#f39c12;--info:#3498db;
+  --nav-h:68px;
+  --font-head:'Syncopate',sans-serif;
+  --font:'Inter',sans-serif;
+  --radius:14px;--radius-sm:8px;--radius-lg:20px;
+  --shadow:0 8px 40px rgba(0,0,0,.7);
+  --glow-red:0 0 40px rgba(230,57,70,.18);
+  --glow-gold:0 0 40px rgba(201,168,76,.12);
+}
+html.light{
+  --bg:#f0f3fb;--bg2:#ffffff;--bg3:#e5e9f5;--bg4:#dce1f0;
+  --red:#d62839;--red2:#e63946;--red-dim:rgba(214,40,57,.08);
+  --gold:#a06800;--gold2:#b8800d;--gold-dim:rgba(160,104,0,.08);
+  --text:#0c0e17;--text2:#4a5068;--text3:#9399b0;
+  --border:#d0d5e8;--border2:#bcc3da;
+  --shadow:0 4px 24px rgba(0,0,0,.1);
+  --glow-red:0 0 24px rgba(214,40,57,.08);
+  --glow-gold:none;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.65;overflow-x:hidden}
+::selection{background:var(--red);color:#fff}
+a{color:var(--red);text-decoration:none;transition:.2s}
+a:hover{color:var(--red2)}
+img{display:block;max-width:100%}
+
+/* ── SCROLLBAR ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── NAV ────────────────────────────────────────────────────────────── */
+.nav{position:fixed;top:0;left:0;right:0;height:calc(var(--nav-h) + env(safe-area-inset-top));z-index:200;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:env(safe-area-inset-top) 40px 0;
+  transition:.35s;background:transparent}
+/* Nav inner items stay 68px row even when inset pushes nav taller */
+.nav-brand,.nav-links,.nav-right{height:var(--nav-h)}
+.nav-links{align-items:center}
+.nav-right{align-items:center}
+.nav.scrolled{background:var(--bg2);border-bottom:1px solid var(--border);
+  box-shadow:0 2px 20px rgba(0,0,0,.4)}
+html.light .nav.scrolled{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.nav-brand{font-family:var(--font-head);font-size:13px;letter-spacing:.18em;color:var(--text);
+  display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-brand .dot{color:var(--red);font-size:18px}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-link{padding:8px 16px;border-radius:var(--radius-sm);color:var(--text2);font-size:13px;
+  font-weight:500;transition:.2s;text-decoration:none}
+.nav-link:hover{background:var(--bg3);color:var(--text)}
+.nav-link.active{color:var(--text);background:var(--bg3)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.btn-nav-ghost{padding:7px 18px;border-radius:var(--radius-sm);border:1px solid var(--border2);
+  color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;background:none;
+  text-decoration:none;transition:.2s;font-family:var(--font)}
+.btn-nav-ghost:hover{border-color:var(--red);color:var(--red)}
+.btn-nav-red{padding:8px 20px;border-radius:var(--radius-sm);background:var(--red);
+  color:#fff;font-size:13px;font-weight:600;cursor:pointer;border:none;
+  text-decoration:none;transition:.2s;font-family:var(--font)}
+.btn-nav-red:hover{background:var(--red2);color:#fff;box-shadow:var(--glow-red)}
+.theme-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:20px;
+  padding:6px 14px;cursor:pointer;font-size:12px;color:var(--text2);transition:.2s;
+  display:flex;align-items:center;gap:5px;white-space:nowrap}
+.theme-btn:hover{border-color:var(--red);color:var(--text)}
+html:not(.light) .t-dark-icon::after{content:'☀️'}
+html.light .t-dark-icon::after{content:'🌙'}
+html:not(.light) .t-dark-label::after{content:'Светлая'}
+html.light .t-dark-label::after{content:'Тёмная'}
+
+/* ── BUTTONS ────────────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 30px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;
+  cursor:pointer;border:none;transition:.25s;font-family:var(--font);text-decoration:none}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:var(--red2);color:#fff;box-shadow:var(--glow-red);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border2)}
+.btn-outline:hover{border-color:var(--red);color:var(--red)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000}
+.btn-gold:hover{box-shadow:var(--glow-gold);transform:translateY(-1px)}
+.btn-lg{padding:16px 40px;font-size:15px}
+
+/* ── SECTION ────────────────────────────────────────────────────────── */
+.section{padding:90px 40px}
+.section-sm{padding:60px 40px}
+.container{max-width:1140px;margin:0 auto}
+.section-label{font-family:var(--font-head);font-size:10px;letter-spacing:.25em;
+  color:var(--red);margin-bottom:16px;opacity:.9}
+.section-title{font-family:var(--font-head);font-size:clamp(20px,3vw,34px);
+  font-weight:700;letter-spacing:.05em;line-height:1.15;margin-bottom:16px}
+.section-title span{color:var(--red)}
+.section-sub{font-size:16px;color:var(--text2);line-height:1.7;max-width:580px;font-weight:300}
+.text-center{text-align:center}
+.text-center .section-sub{margin:0 auto}
+
+/* ── CARDS ──────────────────────────────────────────────────────────── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px}
+html.light .card{box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.card-grid{display:grid;gap:16px}
+.card-grid-2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card-grid-3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card-grid-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+
+/* ── FORM ───────────────────────────────────────────────────────────── */
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text2);margin-bottom:7px}
+.form-control{width:100%;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--radius-sm);color:var(--text);padding:12px 16px;font-size:14px;
+  font-family:var(--font);outline:none;transition:.2s}
+.form-control:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-dim)}
+.form-control::placeholder{color:var(--text3)}
+select.form-control{cursor:pointer}
+select.form-control option{background:var(--bg2);color:var(--text)}
+textarea.form-control{resize:vertical;min-height:110px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ── ALERTS ─────────────────────────────────────────────────────────── */
+.alert{padding:12px 18px;border-radius:var(--radius-sm);margin-bottom:16px;
+  font-size:13px;border:1px solid transparent}
+.alert-success{background:rgba(46,204,113,.1);border-color:rgba(46,204,113,.3);color:var(--success)}
+.alert-error{background:rgba(230,57,70,.1);border-color:rgba(230,57,70,.3);color:var(--red2)}
+
+/* ── DIVIDER ─────────────────────────────────────────────────────────── */
+.divider{border:none;border-top:1px solid var(--border);margin:24px 0}
+.divider-text{display:flex;align-items:center;gap:12px;color:var(--text3);font-size:12px;margin:20px 0}
+.divider-text::before,.divider-text::after{content:'';flex:1;border-top:1px solid var(--border)}
+
+/* ── BADGE ───────────────────────────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.04em}
+.badge-red{background:var(--red-dim);color:var(--red)}
+.badge-gold{background:var(--gold-dim);color:var(--gold2)}
+
+/* ── FOOTER ──────────────────────────────────────────────────────────── */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40px 28px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;max-width:1140px;margin:0 auto 40px}
+.footer-brand{font-family:var(--font-head);font-size:12px;letter-spacing:.15em;margin-bottom:12px;color:var(--text)}
+.footer-brand .dot{color:var(--red)}
+.footer-desc{font-size:13px;color:var(--text2);line-height:1.7;max-width:260px}
+.footer-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:14px}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:8px}
+.footer-links a{font-size:13px;color:var(--text2);transition:.2s}
+.footer-links a:hover{color:var(--red)}
+.footer-bottom{max-width:1140px;margin:0 auto;display:flex;align-items:center;
+  justify-content:space-between;padding-top:24px;border-top:1px solid var(--border);
+  font-size:12px;color:var(--text3)}
+
+/* ── HERO specific ───────────────────────────────────────────────────── */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:calc(var(--nav-h) + env(safe-area-inset-top)) 40px 0}
+.grid-overlay{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 20%,transparent 80%);opacity:.4}
+.hero-glow-1{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(230,57,70,.12) 0%,transparent 70%);top:-100px;left:-100px;pointer-events:none}
+.hero-glow-2{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.07) 0%,transparent 70%);bottom:0;right:0;pointer-events:none}
+.hero-content{position:relative;z-index:1;max-width:780px}
+.hero-eyebrow{font-family:var(--font-head);font-size:10px;letter-spacing:.3em;color:var(--red);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.hero-eyebrow::after{content:'';flex:1;max-width:60px;height:1px;background:var(--red);opacity:.5}
+.hero-h1{font-family:var(--font-head);font-size:clamp(32px,6vw,64px);font-weight:700;letter-spacing:.04em;line-height:1.05;margin-bottom:24px}
+.hero-h1 .red{color:var(--red)}
+.hero-h1 .dim{color:var(--text3)}
+.hero-sub{font-size:17px;color:var(--text2);line-height:1.7;max-width:540px;font-weight:300;margin-bottom:40px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:60px}
+.hero-brands{display:flex;flex-wrap:wrap;gap:8px}
+.brand-pill{background:var(--bg3);border:1px solid var(--border2);border-radius:20px;
+  padding:5px 16px;font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.04em;transition:.2s}
+.brand-pill:hover{border-color:var(--red);color:var(--red)}
+
+/* ── FEATURES ────────────────────────────────────────────────────────── */
+.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:.25s;position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),transparent)}
+.feature-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:var(--shadow)}
+.feature-icon{width:48px;height:48px;border-radius:12px;background:var(--red-dim);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:18px}
+.feature-title{font-size:15px;font-weight:700;margin-bottom:8px;letter-spacing:.02em}
+.feature-desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* ── STATS ───────────────────────────────────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.stat-item{background:var(--bg2);padding:32px 24px;text-align:center}
+.stat-num{font-family:var(--font-head);font-size:28px;font-weight:700;color:var(--text);margin-bottom:6px}
+.stat-num .accent{color:var(--red)}
+.stat-label{font-size:12px;color:var(--text2);letter-spacing:.04em}
+
+/* ── TEAM ────────────────────────────────────────────────────────────── */
+.team-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;transition:.2s}
+.team-card:hover{border-color:var(--border2);box-shadow:var(--shadow)}
+.team-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:32px;background:var(--bg3);border:2px solid var(--border2)}
+.team-name{font-weight:700;font-size:15px;margin-bottom:4px}
+.team-role{font-size:12px;color:var(--red);font-weight:600;letter-spacing:.05em;margin-bottom:10px;text-transform:uppercase}
+.team-desc{font-size:13px;color:var(--text2);line-height:1.55}
+
+/* ── PROCESS ─────────────────────────────────────────────────────────── */
+.step-card{display:flex;gap:20px;align-items:flex-start}
+.step-num{font-family:var(--font-head);font-size:36px;font-weight:700;color:var(--red-dim);line-height:1;flex-shrink:0;width:50px;color:var(--red);opacity:.3}
+.step-body .step-title{font-size:15px;font-weight:700;margin-bottom:6px}
+.step-body .step-desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* ── CONTACT ─────────────────────────────────────────────────────────── */
+.contact-item{display:flex;align-items:flex-start;gap:16px;padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);transition:.2s}
+.contact-item:hover{border-color:var(--border2)}
+.contact-icon{width:44px;height:44px;border-radius:10px;background:var(--red-dim);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.contact-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px;font-weight:600}
+.contact-value{font-size:14px;font-weight:600}
+.contact-sub{font-size:12px;color:var(--text2);margin-top:2px}
+
+/* ── MOBILE & PWA ───────────────────────────────────────────────────── */
+/* iOS safe-area insets */
+body{padding-bottom:env(safe-area-inset-bottom)}
+/* nav left/right padding already set via main rule above */
+footer{padding-left:max(40px,env(safe-area-inset-left));padding-right:max(40px,env(safe-area-inset-right));padding-bottom:max(28px,calc(env(safe-area-inset-bottom) + 16px))}
+
+/* Menu toggle button — hidden on desktop */
+.menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;padding:8px;-webkit-tap-highlight-color:transparent}
+
+/* Tablet ≤ 1024px */
+@media(max-width:1024px){
+  .container{padding:0 24px}
+  .section{padding:70px 24px}
+  .section-sm{padding:50px 24px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+}
+
+/* Mobile ≤ 768px */
+@media(max-width:768px){
+  :root{--nav-h:60px}
+
+  /* Nav */
+  .nav{padding:env(safe-area-inset-top) 16px 0}
+  .nav-brand{font-size:11px;letter-spacing:.12em}
+  .nav-links{
+    display:none;
+    position:fixed;
+    top:calc(var(--nav-h) + env(safe-area-inset-top));left:0;right:0;bottom:0;
+    background:var(--bg2);
+    padding:20px 16px;
+    flex-direction:column;
+    gap:4px;
+    z-index:190;
+    overflow-y:auto;
+    border-top:1px solid var(--border);
+  }
+  .nav-links.open{display:flex}
+  .nav-link{font-size:16px;padding:13px 16px;border-radius:var(--radius)}
+  .nav-right .btn-nav-ghost{display:none}
+  .nav-right .btn-nav-red{padding:8px 16px;font-size:13px}
+  .menu-toggle{display:block}
+
+  /* Hero */
+  .hero{padding:calc(var(--nav-h) + env(safe-area-inset-top) + 40px) 16px 40px;min-height:auto}
+  .hero-h1{font-size:clamp(28px,8vw,42px);line-height:1.1}
+  .hero-eyebrow{font-size:9px;letter-spacing:.2em}
+  .hero-sub{font-size:15px}
+  .hero-cta{gap:10px}
+  .hero-cta .btn{flex:1;min-width:0;padding:13px 20px}
+  .hero-brands{gap:6px}
+  .brand-pill{font-size:11px;padding:4px 12px}
+
+  /* Sections */
+  .section{padding:56px 16px}
+  .section-sm{padding:36px 16px}
+  .section-title{font-size:clamp(18px,6vw,28px)}
+  .section-sub{font-size:14px}
+
+  /* Grids → 1 column on mobile */
+  .card-grid-2,.card-grid-3,.card-grid-4{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr;gap:1px}
+  .stat-num{font-size:22px}
+
+  /* Forms */
+  .form-row{grid-template-columns:1fr}
+  .btn{padding:13px 22px;font-size:14px}
+  .btn-lg{padding:14px 26px;font-size:14px}
+
+  /* Cards */
+  .card{padding:20px}
+  .feature-card{padding:20px}
+
+  /* Footer */
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  footer{padding:36px 16px 20px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center;padding-top:20px}
+
+  /* Contacts page */
+  .contact-item{padding:14px}
+
+  /* 2-col sections on about/contacts */
+  .about-two-col{grid-template-columns:1fr !important;gap:36px !important}
+  /* Admin/vehicle detail 2-col */
+  .vehicle-detail-grid{grid-template-columns:1fr !important}
+}
+
+/* Small phones ≤ 390px */
+@media(max-width:390px){
+  .hero-h1{font-size:28px}
+  .section-title{font-size:22px}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .nav-brand{font-size:10px}
+}
+
+/* ── ANIM ────────────────────────────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.fade-up{animation:fadeUp .6s ease both}
+.fade-up-d1{animation-delay:.1s}
+.fade-up-d2{animation-delay:.2s}
+.fade-up-d3{animation-delay:.3s}
+.fade-up-d4{animation-delay:.4s}
+
+/* ── MAP PLACEHOLDER ─────────────────────────────────────────────────── */
+.map-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;height:340px;display:flex;align-items:center;justify-content:center;position:relative}
+.map-pin{font-size:48px;animation:pulse 2s infinite}
+</style>
+{% block extra_style %}{% endblock %}
+</head>
+<body>
+
+<!-- ── NAVBAR ──────────────────────────────────────────────────────── -->
+<nav class="nav" id="main-nav">
+  <a href="{{ url_for('index') }}" class="nav-brand">
+    <span class="dot">◈</span>CHINAUTO<span style="color:var(--red)">·</span>SERVICE
+  </a>
+
+  <div class="nav-links" id="nav-links">
+    <a href="{{ url_for('index') }}" class="nav-link {{ 'active' if request.endpoint == 'index' }}">Главная</a>
+    <a href="{{ url_for('about') }}" class="nav-link {{ 'active' if request.endpoint == 'about' }}">О нас</a>
+    <a href="{{ url_for('contacts') }}" class="nav-link {{ 'active' if request.endpoint == 'contacts' }}">Контакты</a>
+  </div>
+
+  <div class="nav-right">
+    <button class="theme-btn" onclick="toggleTheme()">
+      <span class="t-dark-icon"></span>
+      <span class="t-dark-label"></span>
+    </button>
+    {% if session.user_id %}
+      <a href="{{ url_for('dashboard') }}" class="btn-nav-ghost">Личный кабинет</a>
+      <a href="{{ url_for('logout') }}" class="btn-nav-red">Выйти</a>
+    {% else %}
+      <a href="{{ url_for('login') }}" class="btn-nav-ghost">Войти</a>
+      <a href="{{ url_for('register') }}" class="btn-nav-red">Регистрация</a>
+    {% endif %}
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<!-- ── FOOTER ──────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand"><span class="dot">◈</span> CHINAUTO·SERVICE</div>
+      <div class="footer-desc">Специализированный сервисный центр для владельцев китайских автомобилей. Профессиональное обслуживание, оригинальные запчасти, гарантия качества.</div>
+    </div>
+    <div>
+      <div class="footer-title">Сервис</div>
+      <ul class="footer-links">
+        <li><a href="{{ url_for('index') }}#features">Возможности</a></li>
+        <li><a href="{{ url_for('register') }}">Регистрация</a></li>
+        <li><a href="{{ url_for('login') }}">Личный кабинет</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-title">Компания</div>
+      <ul class="footer-links">
+        <li><a href="{{ url_for('about') }}">О нас</a></li>
+        <li><a href="{{ url_for('about') }}#team">Команда</a></li>
+        <li><a href="{{ url_for('contacts') }}">Контакты</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-title">Марки</div>
+      <ul class="footer-links">
+        <li><a href="#">Lixiang</a></li>
+        <li><a href="#">Zeekr</a></li>
+        <li><a href="#">Geely / BYD</a></li>
+        <li><a href="#">Haval / Chery</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 ChinAuto Service. Все права защищены.</span>
+    <span>Сделано для владельцев китайских авто 🇨🇳</span>
+  </div>
+</footer>
+
+<script>
+// ── Theme ──────────────────────────────────────────────────────────
+(function(){
+  if(localStorage.getItem('ca_theme')==='light')
+    document.documentElement.classList.add('light');
+})();
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('ca_theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+}
+
+// ── Nav scroll ─────────────────────────────────────────────────────
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 30);
+}, {passive:true});
+
+// ── Mobile menu ────────────────────────────────────────────────────
+function toggleMenu(){
+  document.getElementById('nav-links').classList.toggle('open');
+}
+</script>
+{% block extra_script %}{% endblock %}
+
+<script>
+// ── Service Worker registration ─────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', {scope: '/'})
+      .then(reg => console.log('[SW] registered:', reg.scope))
+      .catch(err => console.log('[SW] error:', err));
+  });
+}
+
+// ── iOS / Android "Add to Home Screen" banner ───────────────────────
+(function() {
+  const KEY = 'ca_pwa_dismissed';
+  // Check if already installed as PWA
+  const isInstalled = window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true;
+  if (isInstalled) return;
+  if (sessionStorage.getItem(KEY)) return;
+
+  // Detect iOS
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  // Detect Android Chrome
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showBanner('android');
+  });
+
+  function showBanner(platform) {
+    const banner = document.getElementById('pwa-banner');
+    if (!banner) return;
+    if (platform === 'ios') {
+      document.getElementById('pwa-ios-hint').style.display = 'flex';
+      document.getElementById('pwa-android-btn').style.display = 'none';
+    } else {
+      document.getElementById('pwa-ios-hint').style.display = 'none';
+      document.getElementById('pwa-android-btn').style.display = 'inline-flex';
+    }
+    banner.style.display = 'flex';
+    // Animate in
+    requestAnimationFrame(() => banner.classList.add('pwa-visible'));
+  }
+
+  window.closePwaBanner = function() {
+    const banner = document.getElementById('pwa-banner');
+    banner.classList.remove('pwa-visible');
+    setTimeout(() => banner.style.display = 'none', 300);
+    sessionStorage.setItem(KEY, '1');
+  };
+
+  window.installPwa = async function() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    closePwaBanner();
+  };
+
+  // Show iOS banner after 2s
+  if (isIOS) {
+    setTimeout(() => showBanner('ios'), 2000);
+  }
+})();
+</script>
+
+<!-- PWA Install Banner -->
+<div id="pwa-banner" style="
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg2);
+  border-top:1px solid var(--border2);
+  padding:14px 16px calc(14px + env(safe-area-inset-bottom)) 16px;
+  z-index:300;
+  align-items:center;gap:14px;
+  box-shadow:0 -4px 24px rgba(0,0,0,.5);
+  transition:transform .3s ease,opacity .3s ease;
+  transform:translateY(100%);opacity:0;
+">
+  <img src="/static/icon.svg" style="width:44px;height:44px;border-radius:10px;flex-shrink:0" alt="ChinAuto">
+  <div style="flex:1;min-width:0">
+    <div style="font-weight:700;font-size:13px">ChinAuto Service</div>
+    <div id="pwa-ios-hint" style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);margin-top:3px;flex-wrap:wrap">
+      Нажмите <span style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:1px 6px;font-size:11px">⎙ Поделиться</span>
+      затем <span style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:1px 6px;font-size:11px">На экран «Домой»</span>
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-top:3px" id="pwa-android-hint">Установите приложение на экран</div>
+  </div>
+  <button id="pwa-android-btn" onclick="installPwa()" style="
+    background:var(--red);color:#fff;border:none;border-radius:8px;
+    padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;
+    font-family:var(--font);white-space:nowrap;flex-shrink:0;
+    -webkit-tap-highlight-color:transparent
+  ">Установить</button>
+  <button onclick="closePwaBanner()" style="
+    background:none;border:none;color:var(--text3);font-size:22px;
+    cursor:pointer;padding:4px;flex-shrink:0;line-height:1;
+    -webkit-tap-highlight-color:transparent
+  ">×</button>
+</div>
+
+<style>
+.pwa-visible{transform:translateY(0) !important;opacity:1 !important}
+/* Tap highlight off for all interactive */
+a,button{-webkit-tap-highlight-color:transparent}
+/* Touch-friendly minimum tap target */
+button,a{touch-action:manipulation}
+</style>
+</body>
+</html>

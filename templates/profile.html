@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Профиль — ChinAuto{% endblock %}
+{% block content %}
+<div style="max-width:440px">
+  <div class="page-title"><span>◈</span> Мой профиль</div>
+  <div class="card">
+    <form method="POST">
+      <div class="form-group">
+        <label class="form-label">Имя</label>
+        <input type="text" name="name" class="form-control" required value="{{ user.name }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email (не изменяется)</label>
+        <input type="text" class="form-control" value="{{ user.email }}" disabled style="opacity:.5">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Телефон</label>
+        <input type="tel" name="phone" class="form-control" value="{{ user.phone or '' }}">
+      </div>
+      <div class="text-gray text-sm" style="margin-bottom:16px">Зарегистрирован: {{ user.created_at[:10] }}</div>
+      <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

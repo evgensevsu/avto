@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block title %}Новый заказ-наряд{% endblock %}
+{% block extra_style %}
+<style>
+.items-table{width:100%;border-collapse:collapse}
+.items-table td{padding:6px 8px;vertical-align:middle}
+.items-table .form-control{padding:7px 10px}
+.item-row td:last-child{width:40px;text-align:center}
+</style>
+{% endblock %}
+{% block content %}
+<div class="flex-between mb-16">
+  <div class="page-title" style="margin-bottom:0"><span>◈</span> Новый заказ-наряд</div>
+  <a href="{{ url_for('admin_orders') }}" class="btn btn-ghost btn-sm">← Назад</a>
+</div>
+<form method="POST">
+<div class="vehicle-detail-grid" style="display:grid;grid-template-columns:1fr 320px;gap:20px">
+<div>
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">Основная информация</div>
+    <div class="form-group">
+      <label class="form-label">Автомобиль *</label>
+      <select name="vehicle_id" class="form-control" required>
+        <option value="">Выберите автомобиль</option>
+        {% for v in vehicles %}
+        <option value="{{ v.id }}">{{ v.brand }} {{ v.model }} · {{ v.vin }} · {{ v.owner_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Дата *</label>
+        <input type="date" name="date" class="form-control" required value="{{ today }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пробег при сдаче (км)</label>
+        <input type="number" name="mileage" class="form-control" min="0">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Статус</label>
+        <select name="status" class="form-control">
+          <option value="pending">Принят</option>
+          <option value="in_progress">В работе</option>
+          <option value="completed">Выполнен</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Техник</label>
+        <input type="text" name="technician" class="form-control" placeholder="ФИО мастера">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Описание / жалоба клиента</label>
+      <textarea name="description" class="form-control" placeholder="Опишите проблему или запрос клиента..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Примечания (внутренние)</label>
+      <textarea name="notes" class="form-control" style="min-height:60px" placeholder="Внутренние заметки..."></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Перечень работ и запчастей</div>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="addItem()">+ Добавить строку</button>
+    </div>
+    <div class="table-wrap" style="overflow-x:auto">
+      <table class="items-table">
+        <thead style="background:var(--bg3)">
+          <tr>
+            <th style="padding:8px;font-size:11px;color:var(--text2);text-align:left;width:35%">Наименование</th>
+            <th style="padding:8px;font-size:11px;color:var(--text2);text-align:left;width:18%">Категория</th>
+            <th style="padding:8px;font-size:11px;color:var(--text2);text-align:left;width:10%">Кол-во</th>
+            <th style="padding:8px;font-size:11px;color:var(--text2);text-align:left;width:14%">Цена</th>
+            <th style="padding:8px;font-size:11px;color:var(--text2);text-align:left;width:14%">Сумма</th>
+            <th style="width:40px"></th>
+          </tr>
+        </thead>
+        <tbody id="items-body">
+          <tr class="item-row">
+            <td><input type="text" name="item_name[]" class="form-control" placeholder="Замена масла..."></td>
+            <td>
+              <select name="item_category[]" class="form-control">
+                <option value="Работы">Работы</option>
+                <option value="Запчасти">Запчасти</option>
+                <option value="Расходники">Расходники</option>
+                <option value="Диагностика">Диагностика</option>
+              </select>
+            </td>
+            <td><input type="number" name="item_qty[]" class="form-control" value="1" min="0.1" step="0.1" onchange="calcRow(this)"></td>
+            <td><input type="number" name="item_price[]" class="form-control" value="0" min="0" onchange="calcRow(this)"></td>
+            <td class="row-total" style="font-weight:600;color:var(--gold2);padding:6px 8px">0 ₽</td>
+            <td><button type="button" onclick="removeRow(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:18px;line-height:1">×</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:right;margin-top:12px;padding:0 8px">
+      <span class="text-gray">Итого: </span>
+      <span id="grand-total" style="font-size:20px;font-weight:700;color:var(--gold2)">0 ₽</span>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="card" style="position:sticky;top:80px">
+    <div class="card-title" style="margin-bottom:14px">Создать заказ</div>
+    <p class="text-gray text-sm" style="margin-bottom:16px">После создания клиент получит уведомление о новом заказ-наряде</p>
+    <button type="submit" class="btn btn-primary" style="width:100%">✓ Создать заказ-наряд</button>
+    <a href="{{ url_for('admin_orders') }}" class="btn btn-ghost" style="width:100%;margin-top:8px;justify-content:center">Отмена</a>
+  </div>
+</div>
+</div>
+</form>
+
+<script>
+function calcRow(el){
+  const row=el.closest('tr');
+  const qty=parseFloat(row.querySelector('[name="item_qty[]"]').value)||0;
+  const price=parseFloat(row.querySelector('[name="item_price[]"]').value)||0;
+  row.querySelector('.row-total').textContent=(qty*price).toFixed(0)+' ₽';
+  calcTotal();
+}
+function calcTotal(){
+  let t=0;
+  document.querySelectorAll('#items-body tr').forEach(r=>{
+    const qty=parseFloat(r.querySelector('[name="item_qty[]"]').value)||0;
+    const price=parseFloat(r.querySelector('[name="item_price[]"]').value)||0;
+    t+=qty*price;
+  });
+  document.getElementById('grand-total').textContent=t.toFixed(0)+' ₽';
+}
+function addItem(){
+  const tbody=document.getElementById('items-body');
+  const tr=tbody.querySelector('tr').cloneNode(true);
+  tr.querySelectorAll('input[type=text]').forEach(i=>i.value='');
+  tr.querySelectorAll('input[type=number]').forEach((i,idx)=>i.value=idx===0?1:0);
+  tr.querySelector('.row-total').textContent='0 ₽';
+  tbody.appendChild(tr);
+}
+function removeRow(btn){
+  const tbody=document.getElementById('items-body');
+  if(tbody.querySelectorAll('tr').length>1) btn.closest('tr').remove();
+  calcTotal();
+}
+</script>
+{% endblock %}

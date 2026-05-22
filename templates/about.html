@@ -1,0 +1,144 @@
+{% extends 'public_base.html' %}
+{% block title %}О нас — ChinAuto Service{% endblock %}
+{% block content %}
+
+<!-- ── HERO ────────────────────────────── -->
+<section style="min-height:50vh;display:flex;align-items:center;padding:calc(var(--nav-h) + env(safe-area-inset-top) + 60px) 40px 60px;position:relative;overflow:hidden">
+  <div class="grid-overlay" style="opacity:.25"></div>
+  <div class="hero-glow-1" style="opacity:.6"></div>
+  <div class="container" style="position:relative;z-index:1">
+    <span class="badge badge-red" style="margin-bottom:20px">О компании</span>
+    <h1 class="section-title" style="font-size:clamp(26px,4vw,48px);max-width:600px">
+      Мы знаем китайские<br>автомобили <span>изнутри</span>
+    </h1>
+    <p class="section-sub" style="max-width:560px;margin-top:16px">
+      ChinAuto Service — команда специалистов по обслуживанию и диагностике китайских автомобилей. С 2021 года мы помогаем владельцам Lixiang, Zeekr, Geely и других марок содержать автомобили в идеальном состоянии.
+    </p>
+  </div>
+</section>
+
+<!-- ── MISSION ─────────────────────────── -->
+<section class="section" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="about-two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center">
+      <div>
+        <div class="section-label">НАША МИССИЯ</div>
+        <h2 class="section-title">Прозрачность<br>и <span>доверие</span></h2>
+        <p style="color:var(--text2);line-height:1.8;margin-bottom:16px">Китайский автомобиль — это высокие технологии и уникальная архитектура. Мы верим, что владелец должен понимать, что происходит с его машиной, и иметь доступ к полной истории обслуживания.</p>
+        <p style="color:var(--text2);line-height:1.8">Наша цифровая платформа — это инструмент прозрачности. Каждый заказ-наряд, каждая замена, каждая отзывная кампания — всё фиксируется и доступно вам в любой момент.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card" style="border-top:2px solid var(--red)">
+          <div style="font-size:32px;margin-bottom:10px">🔬</div>
+          <div style="font-weight:700;margin-bottom:6px">Диагностика</div>
+          <div style="font-size:13px;color:var(--text2)">Полная компьютерная диагностика всех систем</div>
+        </div>
+        <div class="card" style="border-top:2px solid var(--gold2)">
+          <div style="font-size:32px;margin-bottom:10px">🔋</div>
+          <div style="font-weight:700;margin-bottom:6px">Электрика</div>
+          <div style="font-size:13px;color:var(--text2)">Высоковольтные системы и зарядные устройства</div>
+        </div>
+        <div class="card" style="border-top:2px solid var(--info)">
+          <div style="font-size:32px;margin-bottom:10px">🛠</div>
+          <div style="font-weight:700;margin-bottom:6px">ТО и ремонт</div>
+          <div style="font-size:13px;color:var(--text2)">Регламентное обслуживание и все виды ремонта</div>
+        </div>
+        <div class="card" style="border-top:2px solid var(--success)">
+          <div style="font-size:32px;margin-bottom:10px">📦</div>
+          <div style="font-weight:700;margin-bottom:6px">Запчасти</div>
+          <div style="font-size:13px;color:var(--text2)">Оригинальные и аналоговые запчасти под заказ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ────────────────────────────── -->
+<section class="section-sm">
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-num">4<span class="accent">+</span></div><div class="stat-label">Года опыта</div></div>
+      <div class="stat-item"><div class="stat-num">1<span class="accent">200+</span></div><div class="stat-label">Обслуженных авто</div></div>
+      <div class="stat-item"><div class="stat-num">14<span class="accent">+</span></div><div class="stat-label">Марок в работе</div></div>
+      <div class="stat-item"><div class="stat-num">98<span class="accent">%</span></div><div class="stat-label">Довольных клиентов</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TEAM ─────────────────────────────── -->
+<section class="section" id="team" style="background:var(--bg2);border-top:1px solid var(--border)">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:50px">
+      <div class="section-label">НАША КОМАНДА</div>
+      <h2 class="section-title">Люди за <span>сервисом</span></h2>
+      <p class="section-sub">Каждый специалист прошёл обучение по электромобилям и гибридным системам китайских производителей</p>
+    </div>
+    <div class="card-grid card-grid-4">
+      <div class="team-card">
+        <div class="team-avatar">👨‍💼</div>
+        <div class="team-name">Алексей Морозов</div>
+        <div class="team-role">Директор</div>
+        <div class="team-desc">15 лет в автомобильном сервисе. Специализация — китайские и японские бренды</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👨‍🔧</div>
+        <div class="team-name">Дмитрий Чен</div>
+        <div class="team-role">Ст. техник по электрике</div>
+        <div class="team-desc">Сертифицированный специалист по высоковольтным системам BYD и NIO</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👩‍🔧</div>
+        <div class="team-name">Мария Ли</div>
+        <div class="team-role">Диагност</div>
+        <div class="team-desc">Эксперт по диагностике Geely, Haval и Chery. Знает китайский язык</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">👨‍💻</div>
+        <div class="team-name">Игорь Петров</div>
+        <div class="team-role">IT-инженер</div>
+        <div class="team-desc">Разработка и поддержка цифровой платформы, интеграция с системами авто</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VALUES ───────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:50px">
+      <div class="section-label">НАШИ ЦЕННОСТИ</div>
+      <h2 class="section-title">На чём мы <span>строимся</span></h2>
+    </div>
+    <div class="card-grid card-grid-3">
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:14px">🎯</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:8px">Точность</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6">Каждая работа выполняется точно в соответствии с регламентом производителя. Никакого самодеятельности.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:14px">🤝</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:8px">Честность</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6">Мы называем цену до начала работ. Никаких скрытых платежей, никаких работ без согласования с клиентом.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:28px;margin-bottom:14px">🚀</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:8px">Развитие</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6">Постоянно изучаем новые модели и технологии. Китайский автопром развивается быстро — мы не отстаём.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ──────────────────────────────── -->
+<section style="padding:60px 40px;border-top:1px solid var(--border);text-align:center">
+  <div class="container">
+    <h2 class="section-title" style="margin-bottom:12px">Готовы доверить нам<br><span>ваш автомобиль?</span></h2>
+    <p style="color:var(--text2);margin-bottom:28px">Зарегистрируйтесь — это бесплатно</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="{{ url_for('register') }}" class="btn btn-red btn-lg">Создать аккаунт</a>
+      <a href="{{ url_for('contacts') }}" class="btn btn-outline btn-lg">Написать нам</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

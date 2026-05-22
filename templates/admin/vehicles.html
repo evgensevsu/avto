@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Автомобили — Админ{% endblock %}
+{% block content %}
+<div class="page-title"><span>◈</span> Автомобили ({{ vehicles|length }})</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>VIN</th><th>Марка / Модель</th><th>Гос. номер</th><th>Пробег</th><th>Владелец</th><th>Заказов</th></tr></thead>
+      <tbody>
+      {% for v in vehicles %}
+      <tr>
+        <td><span class="vin-tag">{{ v.vin }}</span></td>
+        <td>{{ v.brand }} {{ v.model }}{% if v.year %} ({{ v.year }}){% endif %}</td>
+        <td>{{ v.license_plate or '—' }}</td>
+        <td>{% if v.mileage %}{{ "{:,}".format(v.mileage).replace(',','·') }} км{% else %}—{% endif %}</td>
+        <td>{{ v.owner_name }}<br><span class="text-gray text-sm">{{ v.owner_phone or '' }}</span></td>
+        <td><span class="badge badge-gold">{{ v.order_count }}</span></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

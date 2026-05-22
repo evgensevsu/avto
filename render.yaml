@@ -1,0 +1,44 @@
+# render.yaml — Blueprint для автоматического деплоя на Render
+# Документация: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: chinauto-service
+    runtime: python
+    plan: free                          # Бесплатный план (можно starter/standard)
+    region: frankfurt                   # Ближайший к РФ регион Render
+
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app -c gunicorn.conf.py
+
+    # Persistent disk — SQLite хранится между перезапусками
+    # Бесплатный план не поддерживает диск; используйте Starter ($7/мес) или выше
+    disk:
+      name: chinauto-db
+      mountPath: /data
+      sizeGB: 1
+
+    envVars:
+      # Обязательно: замените на случайную строку в Dashboard → Environment
+      - key: SECRET_KEY
+        generateValue: true             # Render сам сгенерирует случайный ключ
+
+      - key: DATABASE_PATH
+        value: /data/autoservice.db     # Путь на персистентном диске
+
+      - key: FLASK_ENV
+        value: production
+
+      - key: LOG_LEVEL
+        value: info
+
+      - key: WEB_CONCURRENCY
+        value: "2"
+
+      # Опционально: если нужен первый администратор отличный от дефолтного
+      # - key: ADMIN_EMAIL
+      #   value: your@email.com
+      # - key: ADMIN_PASSWORD
+      #   sync: false                   # Вводится вручную в Dashboard (не хранится в git)
+
+    healthCheckPath: /health

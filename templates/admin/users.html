@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Клиенты — Админ{% endblock %}
+{% block content %}
+<div class="page-title"><span>◈</span> Клиенты ({{ users|length }})</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Имя</th><th>Email</th><th>Телефон</th><th>Авт.</th><th>Заказов</th><th>Зарегистрирован</th></tr></thead>
+      <tbody>
+      {% for u in users %}
+      <tr>
+        <td style="font-weight:500">{{ u.name }}</td>
+        <td class="text-gray">{{ u.email }}</td>
+        <td class="text-gray">{{ u.phone or '—' }}</td>
+        <td><span class="badge badge-blue">{{ u.vehicle_count }}</span></td>
+        <td><span class="badge badge-gold">{{ u.order_count }}</span></td>
+        <td class="text-gray text-sm">{{ u.created_at[:10] }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#0f1116"/>
+  <rect width="512" height="512" rx="112" fill="url(#grad)"/>
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c2030"/>
+      <stop offset="100%" stop-color="#0a0b0e"/>
+    </linearGradient>
+  </defs>
+  <!-- Red accent bar top -->
+  <rect x="0" y="0" width="512" height="6" rx="3" fill="#e63946"/>
+  <!-- Diamond symbol -->
+  <polygon points="256,110 340,256 256,402 172,256" fill="none" stroke="#e63946" stroke-width="18" stroke-linejoin="round"/>
+  <polygon points="256,155 315,256 256,357 197,256" fill="#e63946" opacity="0.9"/>
+  <!-- Text CHINAUTO -->
+  <text x="256" y="455" font-family="Arial,sans-serif" font-size="42" font-weight="700" letter-spacing="6" fill="#e8eaf0" text-anchor="middle" opacity="0.85">CA</text>
+</svg>

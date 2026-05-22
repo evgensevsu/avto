@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Заказ-наряды — Админ{% endblock %}
+{% block content %}
+<div class="flex-between mb-16">
+  <div class="page-title" style="margin-bottom:0"><span>◈</span> Заказ-наряды</div>
+  <a href="{{ url_for('admin_new_order') }}" class="btn btn-primary">+ Создать заказ</a>
+</div>
+
+<!-- Filters -->
+<div class="card" style="padding:14px 20px;margin-bottom:20px">
+  <form method="GET" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <input type="text" name="q" class="form-control" style="max-width:240px" placeholder="Поиск: заказ, клиент, VIN..." value="{{ q }}">
+    <select name="status" class="form-control" style="max-width:160px">
+      <option value="">Все статусы</option>
+      <option value="pending" {{ 'selected' if status_filter=='pending' }}>Принят</option>
+      <option value="in_progress" {{ 'selected' if status_filter=='in_progress' }}>В работе</option>
+      <option value="completed" {{ 'selected' if status_filter=='completed' }}>Выполнен</option>
+      <option value="cancelled" {{ 'selected' if status_filter=='cancelled' }}>Отменён</option>
+    </select>
+    <button type="submit" class="btn btn-secondary">Фильтр</button>
+    {% if q or status_filter %}<a href="{{ url_for('admin_orders') }}" class="btn btn-ghost">Сбросить</a>{% endif %}
+  </form>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Номер заказа</th><th>Клиент</th><th>Автомобиль</th><th>Дата</th><th>Техник</th><th>Сумма</th><th>Статус</th><th>Действия</th></tr></thead>
+      <tbody>
+      {% for o in orders %}
+      <tr>
+        <td><a href="{{ url_for('admin_order_detail', oid=o.id) }}" style="color:var(--gold2);font-weight:600">{{ o.order_number }}</a></td>
+        <td>{{ o.client_name }}<br><span class="text-gray text-sm">{{ o.client_phone or '' }}</span></td>
+        <td>{{ o.brand }} {{ o.model }}<br><span class="vin-tag" style="font-size:11px">{{ o.vin }}</span></td>
+        <td>{{ o.date }}</td>
+        <td>{{ o.technician or '—' }}</td>
+        <td style="font-weight:600">{{ "%.0f"|format(o.total_cost) }} ₽</td>
+        <td>
+          {% if o.status=='completed' %}<span class="badge badge-green">Выполнен</span>
+          {% elif o.status=='in_progress' %}<span class="badge badge-gold">В работе</span>
+          {% elif o.status=='pending' %}<span class="badge badge-blue">Принят</span>
+          {% elif o.status=='cancelled' %}<span class="badge badge-red">Отменён</span>
+          {% else %}<span class="badge badge-gray">{{ o.status }}</span>{% endif %}
+        </td>
+        <td>
+          <form method="POST" action="{{ url_for('admin_update_order_status', oid=o.id) }}" style="display:flex;gap:4px">
+            <select name="status" class="form-control" style="padding:4px 8px;font-size:11px;min-width:110px">
+              <option value="pending" {{ 'selected' if o.status=='pending' }}>Принят</option>
+              <option value="in_progress" {{ 'selected' if o.status=='in_progress' }}>В работе</option>
+              <option value="completed" {{ 'selected' if o.status=='completed' }}>Выполнен</option>
+              <option value="cancelled" {{ 'selected' if o.status=='cancelled' }}>Отменён</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-secondary">✓</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if not orders %}<div class="empty-state"><p>Заказы не найдены</p></div>{% endif %}
+</div>
+{% endblock %}

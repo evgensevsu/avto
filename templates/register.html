@@ -1,0 +1,132 @@
+{% extends 'public_base.html' %}
+{% block title %}Регистрация — ChinAuto Service{% endblock %}
+{% block content %}
+
+<section style="min-height:100vh;display:flex;align-items:center;padding:calc(var(--nav-h) + env(safe-area-inset-top) + 20px) 20px 40px;position:relative;overflow:hidden">
+  <div class="grid-overlay" style="opacity:.2"></div>
+  <div class="hero-glow-1" style="opacity:.4"></div>
+  <div class="hero-glow-2" style="opacity:.3"></div>
+
+  <div style="width:100%;max-width:500px;margin:0 auto;position:relative;z-index:1">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:32px">
+      <a href="{{ url_for('index') }}" style="font-family:var(--font-head);font-size:12px;letter-spacing:.18em;color:var(--text);text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-bottom:28px">
+        <span style="color:var(--red)">◈</span> CHINAUTO·SERVICE
+      </a>
+      <h1 style="font-family:var(--font-head);font-size:20px;letter-spacing:.08em;margin-bottom:8px">СОЗДАТЬ <span style="color:var(--red)">АККАУНТ</span></h1>
+      <p style="font-size:13px;color:var(--text2)">Регистрация бесплатна — доступ к кабинету сразу</p>
+    </div>
+
+    <!-- Perks -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:24px">
+      <span style="font-size:11px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--text2)">✓ Бесплатно</span>
+      <span style="font-size:11px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--text2)">✓ История ТО</span>
+      <span style="font-size:11px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--text2)">✓ Уведомления</span>
+      <span style="font-size:11px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--text2)">✓ Без рекламы</span>
+    </div>
+
+    <!-- Card -->
+    <div class="card" style="padding:32px">
+      {% with msgs = get_flashed_messages(with_categories=true) %}
+        {% for cat, msg in msgs %}
+        <div class="alert alert-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      <form method="POST">
+        <div class="form-group">
+          <label class="form-label">Имя *</label>
+          <input type="text" name="name" class="form-control" required placeholder="Иван Петров" autofocus>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input type="email" name="email" class="form-control" required placeholder="ivan@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Телефон</label>
+            <input type="tel" name="phone" class="form-control" placeholder="+7 900 000-00-00">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Пароль * <span style="color:var(--text3);font-size:10px;text-transform:none;letter-spacing:0">(мин. 6 симв.)</span></label>
+            <div style="position:relative">
+              <input type="password" name="password" id="pwd1" class="form-control" required placeholder="••••••••" oninput="checkStrength(this.value)" style="padding-right:44px">
+              <button type="button" onclick="togglePwd('pwd1','eye1')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px" id="eye1">👁</button>
+            </div>
+            <!-- Strength bar -->
+            <div style="margin-top:6px;height:3px;background:var(--border2);border-radius:2px;overflow:hidden">
+              <div id="strength-bar" style="height:100%;width:0%;background:var(--red);transition:.3s;border-radius:2px"></div>
+            </div>
+            <div id="strength-label" style="font-size:10px;color:var(--text3);margin-top:3px"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Повторите *</label>
+            <div style="position:relative">
+              <input type="password" name="confirm" id="pwd2" class="form-control" required placeholder="••••••••" oninput="checkMatch()" style="padding-right:44px">
+              <button type="button" onclick="togglePwd('pwd2','eye2')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px" id="eye2">👁</button>
+            </div>
+            <div id="match-label" style="font-size:11px;margin-top:4px"></div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-red" style="width:100%;margin-top:4px">Создать аккаунт →</button>
+      </form>
+
+      <div class="divider-text">или</div>
+
+      <div style="text-align:center">
+        <span style="font-size:13px;color:var(--text2)">Уже есть аккаунт? </span>
+        <a href="{{ url_for('login') }}" style="font-size:13px;font-weight:600">Войти →</a>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:24px">
+      <a href="{{ url_for('index') }}" style="font-size:12px;color:var(--text3)">← На главную</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+{% block extra_script %}
+<script>
+function togglePwd(id, eyeId){
+  const i = document.getElementById(id);
+  const e = document.getElementById(eyeId);
+  if(i.type==='password'){ i.type='text'; e.textContent='🙈'; }
+  else { i.type='password'; e.textContent='👁'; }
+}
+function checkStrength(v){
+  const bar = document.getElementById('strength-bar');
+  const lbl = document.getElementById('strength-label');
+  let score = 0;
+  if(v.length >= 6) score++;
+  if(v.length >= 10) score++;
+  if(/[A-Z]/.test(v)) score++;
+  if(/[0-9]/.test(v)) score++;
+  if(/[^A-Za-z0-9]/.test(v)) score++;
+  const levels = [
+    {w:'0%', c:'var(--red)', t:''},
+    {w:'25%', c:'var(--red)', t:'Слабый'},
+    {w:'50%', c:'var(--warn)', t:'Средний'},
+    {w:'75%', c:'var(--info)', t:'Хороший'},
+    {w:'100%', c:'var(--success)', t:'Надёжный'},
+  ];
+  const l = levels[Math.min(score, 4)];
+  bar.style.width = l.w;
+  bar.style.background = l.c;
+  lbl.textContent = l.t;
+  lbl.style.color = l.c;
+}
+function checkMatch(){
+  const p1 = document.getElementById('pwd1').value;
+  const p2 = document.getElementById('pwd2').value;
+  const lbl = document.getElementById('match-label');
+  if(!p2) { lbl.textContent=''; return; }
+  if(p1===p2) { lbl.textContent='✓ Пароли совпадают'; lbl.style.color='var(--success)'; }
+  else { lbl.textContent='✗ Пароли не совпадают'; lbl.style.color='var(--red)'; }
+}
+</script>
+{% endblock %}

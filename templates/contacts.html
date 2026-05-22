@@ -1,0 +1,182 @@
+{% extends 'public_base.html' %}
+{% block title %}Контакты — ChinAuto Service{% endblock %}
+{% block content %}
+
+<!-- ── HERO ────────────────────────────── -->
+<section style="padding:calc(var(--nav-h) + env(safe-area-inset-top) + 60px) 40px 60px;position:relative;overflow:hidden">
+  <div class="grid-overlay" style="opacity:.2"></div>
+  <div class="hero-glow-1" style="top:-200px;opacity:.5"></div>
+  <div class="container" style="position:relative;z-index:1">
+    <span class="badge badge-red" style="margin-bottom:20px">Контакты</span>
+    <h1 class="section-title" style="font-size:clamp(26px,4vw,48px)">
+      Свяжитесь <span>с нами</span>
+    </h1>
+    <p class="section-sub" style="margin-top:12px">Ответим на все вопросы об обслуживании вашего китайского автомобиля</p>
+  </div>
+</section>
+
+<!-- ── MAIN CONTENT ──────────────────────── -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="about-two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
+
+      <!-- LEFT: contacts + map -->
+      <div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px">
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div>
+              <div class="contact-label">Адрес</div>
+              <div class="contact-value">ул. Автомобильная, 88, стр. 2</div>
+              <div class="contact-sub">Москва, Северный промышленный район</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div>
+              <div class="contact-label">Телефон</div>
+              <div class="contact-value"><a href="tel:+74951234567" style="color:var(--text)">+7 (495) 123-45-67</a></div>
+              <div class="contact-sub">Пн–Сб: 9:00 — 20:00</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">✉️</div>
+            <div>
+              <div class="contact-label">Email</div>
+              <div class="contact-value"><a href="mailto:info@chinauto.ru" style="color:var(--text)">info@chinauto.ru</a></div>
+              <div class="contact-sub">Ответ в течение 2 часов в рабочее время</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">💬</div>
+            <div>
+              <div class="contact-label">Telegram</div>
+              <div class="contact-value"><a href="https://t.me/chinauto_service" style="color:var(--text)">@chinauto_service</a></div>
+              <div class="contact-sub">Быстрые ответы и запись на сервис</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">🕐</div>
+            <div>
+              <div class="contact-label">Режим работы</div>
+              <div class="contact-value">Пн–Пт: 9:00–20:00 · Сб: 10:00–18:00</div>
+              <div class="contact-sub">Воскресенье — выходной</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map placeholder -->
+        <div class="map-box">
+          <div style="text-align:center;z-index:1">
+            <div class="map-pin">📍</div>
+            <div style="font-family:var(--font-head);font-size:11px;letter-spacing:.1em;color:var(--text2);margin-top:8px">УЛ. АВТОМОБИЛЬНАЯ, 88</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px">Карта будет здесь</div>
+            <a href="https://maps.google.com" target="_blank" class="btn btn-outline" style="margin-top:16px;padding:8px 20px;font-size:12px">Открыть в Google Maps →</a>
+          </div>
+          <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,var(--red-dim) 0%,transparent 70%)"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: form -->
+      <div>
+        <div class="card">
+          <div style="font-family:var(--font-head);font-size:12px;letter-spacing:.1em;margin-bottom:6px;color:var(--text)">НАПИСАТЬ НАМ</div>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:24px">Задайте вопрос, запишитесь на обслуживание или уточните стоимость работ</p>
+
+          {% with msgs = get_flashed_messages(with_categories=true) %}
+            {% for cat, msg in msgs %}
+            <div class="alert alert-{{ cat }}">{{ msg }}</div>
+            {% endfor %}
+          {% endwith %}
+
+          <form id="contact-form" onsubmit="submitForm(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Ваше имя *</label>
+                <input type="text" class="form-control" id="cf-name" required placeholder="Иван Петров">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Телефон *</label>
+                <input type="tel" class="form-control" id="cf-phone" required placeholder="+7 900 000-00-00">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" id="cf-email" placeholder="ivan@example.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Тема</label>
+              <select class="form-control" id="cf-subject">
+                <option value="">Выберите тему</option>
+                <option>Запись на ТО</option>
+                <option>Диагностика</option>
+                <option>Вопрос по заказ-наряду</option>
+                <option>Запчасти под заказ</option>
+                <option>Регистрация в системе</option>
+                <option>Другое</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Марка и модель автомобиля</label>
+              <input type="text" class="form-control" id="cf-car" placeholder="Lixiang L9 2024">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Сообщение *</label>
+              <textarea class="form-control" id="cf-message" required placeholder="Опишите ваш вопрос или проблему..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-red" id="cf-submit" style="width:100%">
+              <span id="cf-btn-text">Отправить сообщение</span>
+            </button>
+          </form>
+
+          <div id="form-success" style="display:none;text-align:center;padding:28px 0">
+            <div style="font-size:48px;margin-bottom:12px">✅</div>
+            <div style="font-weight:700;font-size:16px;margin-bottom:6px">Сообщение отправлено!</div>
+            <div style="color:var(--text2);font-size:14px">Мы свяжемся с вами в течение 2 часов в рабочее время.</div>
+            <button onclick="resetForm()" class="btn btn-outline" style="margin-top:20px">Написать ещё</button>
+          </div>
+        </div>
+
+        <!-- Quick links -->
+        <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <a href="{{ url_for('register') }}" class="card" style="text-decoration:none;text-align:center;padding:18px;transition:.2s;cursor:pointer" onmouseover="this.style.borderColor='var(--red)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="font-size:24px;margin-bottom:6px">👤</div>
+            <div style="font-weight:600;font-size:13px">Регистрация</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px">Создать аккаунт</div>
+          </a>
+          <a href="{{ url_for('login') }}" class="card" style="text-decoration:none;text-align:center;padding:18px;transition:.2s;cursor:pointer" onmouseover="this.style.borderColor='var(--red)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="font-size:24px;margin-bottom:6px">🔑</div>
+            <div style="font-weight:600;font-size:13px">Войти</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px">Личный кабинет</div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+{% block extra_script %}
+<script>
+function submitForm(e) {
+  e.preventDefault();
+  const btn = document.getElementById('cf-submit');
+  const btnText = document.getElementById('cf-btn-text');
+  btn.disabled = true;
+  btnText.textContent = 'Отправляем...';
+  // Simulate send
+  setTimeout(() => {
+    document.getElementById('contact-form').style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+  }, 1200);
+}
+function resetForm() {
+  document.getElementById('contact-form').reset();
+  document.getElementById('contact-form').style.display = 'block';
+  document.getElementById('form-success').style.display = 'none';
+  document.getElementById('cf-submit').disabled = false;
+  document.getElementById('cf-btn-text').textContent = 'Отправить сообщение';
+}
+</script>
+{% endblock %}

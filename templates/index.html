@@ -1,0 +1,180 @@
+{% extends 'public_base.html' %}
+{% block title %}ChinAuto Service — Сервис китайских автомобилей{% endblock %}
+{% block content %}
+
+<!-- ── HERO ──────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="grid-overlay"></div>
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow fade-up">КИТАЙСКИЕ АВТОМОБИЛИ · ПРОФЕССИОНАЛЬНЫЙ СЕРВИС</div>
+    <h1 class="hero-h1 fade-up fade-up-d1">
+      УМНОЕ<br>
+      ОБСЛУЖИВАНИЕ<br>
+      <span class="red">ВАШЕГО</span> <span class="dim">АВТО</span>
+    </h1>
+    <p class="hero-sub fade-up fade-up-d2">Личный кабинет владельца китайского автомобиля. История ТО, отзывные кампании, контроль SIM-карт и регламенты — всё в одном месте.</p>
+    <div class="hero-cta fade-up fade-up-d3">
+      <a href="{{ url_for('register') }}" class="btn btn-red btn-lg">Создать аккаунт →</a>
+      <a href="{{ url_for('about') }}" class="btn btn-outline btn-lg">Узнать больше</a>
+    </div>
+    <div class="hero-brands fade-up fade-up-d4">
+      {% for brand in ['Lixiang','Zeekr','Geely','BYD','Chery','Haval','AITO','NIO','XPeng','Tank','Voyah','Hongqi'] %}
+      <span class="brand-pill">{{ brand }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ──────────────────────────────────────────────────────────── -->
+<section class="section-sm" style="padding-top:0">
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-num">50<span class="accent">+</span></div>
+        <div class="stat-label">Марок в базе WMI</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">16</div>
+        <div class="stat-label">Регламентов ТО</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num"><span class="accent">24</span>/7</div>
+        <div class="stat-label">Доступ к кабинету</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">0 ₽</div>
+        <div class="stat-label">Регистрация бесплатна</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ───────────────────────────────────────────────────────── -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:50px">
+      <div class="section-label">ВОЗМОЖНОСТИ ПЛАТФОРМЫ</div>
+      <h2 class="section-title">Всё что нужно<br><span>владельцу</span></h2>
+      <p class="section-sub">Мы собрали весь инструментарий для грамотного обслуживания китайского автомобиля в одном сервисе</p>
+    </div>
+    <div class="card-grid card-grid-3">
+      <div class="feature-card">
+        <div class="feature-icon">🔑</div>
+        <div class="feature-title">VIN-идентификация</div>
+        <div class="feature-desc">Введите 17-значный VIN — система автоматически определит марку, модель и год выпуска по базе WMI-кодов китайских производителей.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">История обслуживания</div>
+        <div class="feature-desc">Все заказ-наряды, выполненные работы и замены запчастей хранятся в хронологическом порядке. Доступ в любое время.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚠️</div>
+        <div class="feature-title">Отзывные кампании</div>
+        <div class="feature-desc">Автоматические уведомления об отзывных кампаниях производителей по вашей марке и модели. Не пропустите важные бесплатные работы.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">Контроль SIM-карт</div>
+        <div class="feature-desc">Встроенная РФ SIM и китайская eSender — отслеживайте сроки пополнения. Всплывающее уведомление за день до истечения.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔧</div>
+        <div class="feature-title">Регламент ТО</div>
+        <div class="feature-desc">Рекомендованные работы по каждой марке с интервалами по пробегу и времени. Никогда не пропустите плановое обслуживание.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🇨🇳</div>
+        <div class="feature-title">Китайский номер</div>
+        <div class="feature-desc">Храните данные китайского номерного знака и отслеживайте срок действия регистрации с цветовой индикацией.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ────────────────────────────────────────────────────── -->
+<section class="section" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center">
+      <div>
+        <div class="section-label">КАК ЭТО РАБОТАЕТ</div>
+        <h2 class="section-title">Три шага до<br><span>контроля</span></h2>
+        <p class="section-sub" style="margin-bottom:40px">Начните пользоваться за несколько минут — регистрация, добавление автомобиля и полный доступ к истории.</p>
+        <a href="{{ url_for('register') }}" class="btn btn-red">Начать бесплатно →</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:28px">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-body">
+            <div class="step-title">Зарегистрируйтесь</div>
+            <div class="step-desc">Создайте аккаунт за 30 секунд — имя, email и пароль. Никакой лишней информации.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-body">
+            <div class="step-title">Добавьте автомобиль по VIN</div>
+            <div class="step-desc">Введите VIN — марка определится автоматически. Укажите данные SIM-карт и китайского номера.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-body">
+            <div class="step-title">Получайте уведомления</div>
+            <div class="step-desc">История ТО, напоминания о пополнении SIM, отзывные кампании — всё отображается в личном кабинете.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BRANDS ──────────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container text-center">
+    <div class="section-label">ПОДДЕРЖИВАЕМЫЕ МАРКИ</div>
+    <h2 class="section-title" style="margin-bottom:40px">Работаем со всеми<br><span>китайскими</span> брендами</h2>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:800px;margin:0 auto 40px">
+      {% set brands_list = [
+        ('Lixiang','L6·L7·L8·L9·MEGA'),
+        ('Zeekr','001·007·009·X'),
+        ('Geely','Atlas·Coolray·Monjaro'),
+        ('BYD','Han·Tang·Seal·Atto'),
+        ('Chery','Tiggo·Omoda'),
+        ('Haval','H6·Jolion·F7'),
+        ('AITO','M5·M7·M9'),
+        ('NIO','ES6·ET5·ET7'),
+        ('XPeng','P7·G6·X9'),
+        ('Tank','300·400·500'),
+        ('Voyah','Free·Dream'),
+        ('Hongqi','H5·H9·HS5'),
+        ('Denza','D9·N7·Z9'),
+        ('Changan','CS75·UNI-K'),
+      ] %}
+      {% for name, models in brands_list %}
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;text-align:left;min-width:150px">
+        <div style="font-weight:700;font-size:14px;margin-bottom:3px">{{ name }}</div>
+        <div style="font-size:11px;color:var(--text3)">{{ models }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <a href="{{ url_for('register') }}" class="btn btn-outline">Зарегистрироваться →</a>
+  </div>
+</section>
+
+<!-- ── CTA BANNER ──────────────────────────────────────────────────────── -->
+<section style="padding:60px 40px;background:linear-gradient(135deg,rgba(230,57,70,.12) 0%,rgba(201,168,76,.06) 100%);border-top:1px solid var(--border)">
+  <div class="container text-center">
+    <div class="section-label" style="margin-bottom:12px">НАЧНИТЕ СЕГОДНЯ</div>
+    <h2 class="section-title" style="margin-bottom:14px">Ваш автомобиль заслуживает<br><span>профессионального</span> ухода</h2>
+    <p style="color:var(--text2);font-size:15px;margin-bottom:32px">Регистрация бесплатна. Добавьте автомобиль за 2 минуты.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="{{ url_for('register') }}" class="btn btn-red btn-lg">Создать аккаунт</a>
+      <a href="{{ url_for('contacts') }}" class="btn btn-outline btn-lg">Связаться с нами</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

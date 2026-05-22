@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Личный кабинет — ChinAuto{% endblock %}
+{% block content %}
+<div class="page-title"><span>◈</span> Личный кабинет</div>
+
+{% if notifications %}
+<div style="margin-bottom:20px">
+  {% for n in notifications %}
+  <div class="alert alert-{{ n.type }}" style="justify-content:space-between">
+    <div><strong>{{ n.title }}</strong>{% if n.message %} — {{ n.message }}{% endif %}</div>
+    <a href="{{ url_for('mark_notification_read', nid=n.id) }}" style="color:inherit;opacity:.6;font-size:18px;line-height:1">×</a>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-num">{{ vehicles|length }}</div>
+    <div class="stat-label">Автомобилей</div>
+  </div>
+  <div class="stat-card gold">
+    <div class="stat-num">{{ total_orders }}</div>
+    <div class="stat-label">Заказ-нарядов</div>
+  </div>
+  <div class="stat-card blue">
+    <div class="stat-num">{{ user.name.split()[0] }}</div>
+    <div class="stat-label">Добро пожаловать</div>
+  </div>
+</div>
+
+<div class="flex-between mb-16">
+  <div class="card-title">МОИ АВТОМОБИЛИ</div>
+  <a href="{{ url_for('add_vehicle') }}" class="btn btn-primary btn-sm">+ Добавить автомобиль</a>
+</div>
+
+{% if vehicles %}
+<div class="vehicle-grid">
+  {% for v in vehicles %}
+  <a href="{{ url_for('vehicle_detail', vid=v.id) }}" style="text-decoration:none">
+    <div class="vehicle-card">
+      <div class="vehicle-brand">{{ v.brand }}</div>
+      <div class="vehicle-model">{{ v.model }}{% if v.year %} · {{ v.year }}{% endif %}{% if v.color %} · {{ v.color }}{% endif %}</div>
+      <div class="vin-tag">{{ v.vin }}</div>
+      {% if v.license_plate %}
+        <div class="text-gray text-sm mt-16">🪪 {{ v.license_plate }}</div>
+      {% endif %}
+      {% if v.mileage %}
+        <div class="text-gray text-sm" style="margin-top:4px">📍 {{ "{:,}".format(v.mileage).replace(',','·') }} км</div>
+      {% endif %}
+      {% if v.chinese_number %}
+        <div class="cn-timer" style="margin-top:12px">
+          <div class="text-sm text-gray">🇨🇳 Китайский номер</div>
+          <div style="font-weight:600;font-size:13px;margin-top:2px">{{ v.chinese_number }}</div>
+          {% if v.chinese_number_expiry %}
+          <div class="text-sm text-gray" style="margin-top:2px">до {{ v.chinese_number_expiry }}</div>
+          {% endif %}
+        </div>
+      {% endif %}
+      <!-- SIM status badges -->
+      {% if v.rf_sim_number or v.esender_number %}
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+        {% if v.rf_sim_number %}
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;font-size:11px;display:flex;align-items:center;gap:6px;
+          {% if v.rf_sim_days_left is not none and v.rf_sim_days_left <= 1 %}border-color:rgba(230,57,70,.6);background:rgba(230,57,70,.08){% elif v.rf_sim_days_left is not none and v.rf_sim_days_left <= 7 %}border-color:rgba(243,156,18,.5);background:rgba(243,156,18,.05){% endif %}">
+          <span>📱</span>
+          <span style="color:var(--text2)">РФ SIM</span>
+          {% if v.rf_sim_days_left is not none %}
+            {% if v.rf_sim_days_left <= 1 %}<span style="color:var(--red);font-weight:700">Пополнить!</span>
+            {% elif v.rf_sim_days_left <= 7 %}<span style="color:var(--warn);font-weight:600">{{ v.rf_sim_days_left }} дн.</span>
+            {% else %}<span style="color:var(--text2)">{{ v.rf_sim_days_left }} дн.</span>{% endif %}
+          {% else %}<span style="color:var(--text3)">–</span>{% endif %}
+        </div>
+        {% endif %}
+        {% if v.esender_number %}
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;font-size:11px;display:flex;align-items:center;gap:6px;
+          {% if v.esender_days_left is not none and v.esender_days_left <= 1 %}border-color:rgba(230,57,70,.6);background:rgba(230,57,70,.08){% elif v.esender_days_left is not none and v.esender_days_left <= 7 %}border-color:rgba(243,156,18,.5);background:rgba(243,156,18,.05){% endif %}">
+          <span>🇨🇳</span>
+          <span style="color:var(--text2)">eSender</span>
+          {% if v.esender_days_left is not none %}
+            {% if v.esender_days_left <= 1 %}<span style="color:var(--red);font-weight:700">Пополнить!</span>
+            {% elif v.esender_days_left <= 7 %}<span style="color:var(--warn);font-weight:600">{{ v.esender_days_left }} дн.</span>
+            {% else %}<span style="color:var(--text2)">{{ v.esender_days_left }} дн.</span>{% endif %}
+          {% else %}<span style="color:var(--text3)">–</span>{% endif %}
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="icon">🚗</div>
+  <p>У вас нет добавленных автомобилей</p>
+  <a href="{{ url_for('add_vehicle') }}" class="btn btn-primary" style="margin-top:16px">Добавить первый автомобиль</a>
+</div>
+{% endif %}
+{% endblock %}

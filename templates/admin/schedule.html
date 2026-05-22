@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Регламент ТО — Админ{% endblock %}
+{% block content %}
+<div class="page-title"><span>◈</span> Регламент технического обслуживания</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Марка</th><th>Работа</th><th>Категория</th><th>Интервал км</th><th>Интервал мес.</th><th>Приоритет</th><th>Описание</th></tr></thead>
+      <tbody>
+      {% for s in schedule %}
+      <tr>
+        <td><span class="badge badge-gold">{{ s.brand }}</span></td>
+        <td style="font-weight:500">{{ s.work_name }}</td>
+        <td><span class="badge badge-gray">{{ s.category }}</span></td>
+        <td>{% if s.interval_km %}{{ "{:,}".format(s.interval_km).replace(',','·') }}{% else %}—{% endif %}</td>
+        <td>{% if s.interval_months %}{{ s.interval_months }}{% else %}—{% endif %}</td>
+        <td>{% if s.priority=='high' %}<span class="badge badge-red">Важно</span>{% else %}<span class="badge badge-gray">Обычный</span>{% endif %}</td>
+        <td class="text-gray text-sm">{{ s.description or '—' }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

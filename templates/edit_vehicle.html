@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}Редактировать автомобиль{% endblock %}
+{% block content %}
+<div style="max-width:680px">
+  <div class="page-title"><span>◈</span> Редактировать автомобиль</div>
+  <div class="card">
+    <form method="POST">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Марка *</label>
+          <select name="brand" class="form-control" required>
+            {% for b in brands %}<option value="{{ b }}" {{ 'selected' if b == vehicle.brand }}>{{ b }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Модель *</label>
+          <input type="text" name="model" class="form-control" required value="{{ vehicle.model }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">VIN</label>
+        <div class="vin-tag" style="display:inline-block;padding:10px 14px;width:100%">{{ vehicle.vin }}</div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">Год</label>
+          <input type="number" name="year" class="form-control" value="{{ vehicle.year or '' }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Цвет</label>
+          <input type="text" name="color" class="form-control" value="{{ vehicle.color or '' }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Гос. номер</label>
+          <input type="text" name="license_plate" class="form-control" value="{{ vehicle.license_plate or '' }}" style="text-transform:uppercase">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пробег (км)</label>
+        <input type="number" name="mileage" class="form-control" value="{{ vehicle.mileage or 0 }}">
+      </div>
+
+      <hr class="divider">
+      <div class="card-title" style="margin-bottom:14px">🇨🇳 Китайский номерной знак</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Номер</label>
+          <input type="text" name="chinese_number" class="form-control" value="{{ vehicle.chinese_number or '' }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Срок действия</label>
+          <input type="date" name="chinese_number_expiry" class="form-control" value="{{ vehicle.chinese_number_expiry or '' }}">
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="card-title" style="margin-bottom:14px">📱 РФ SIM-карта</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Номер телефона</label>
+          <input type="text" name="rf_sim_number" class="form-control" value="{{ vehicle.rf_sim_number or '' }}" placeholder="+7 900 000-00-00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Оператор</label>
+          <select name="rf_sim_operator" class="form-control">
+            <option value="">Выберите</option>
+            {% for op in ['МТС','Билайн','МегаФон','Tele2','Yota','СберМобайл','Другой'] %}
+            <option {{ 'selected' if vehicle.rf_sim_operator == op }}>{{ op }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Дата последнего пополнения</label>
+          <input type="date" name="rf_sim_topup_date" class="form-control" value="{{ vehicle.rf_sim_topup_date or '' }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Интервал (дней)</label>
+          <input type="number" name="rf_sim_topup_days" class="form-control" value="{{ vehicle.rf_sim_topup_days or 30 }}" min="1" max="365">
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="card-title" style="margin-bottom:14px">🇨🇳 eSender SIM</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Номер / ID eSender</label>
+          <input type="text" name="esender_number" class="form-control" value="{{ vehicle.esender_number or '' }}" placeholder="+86 или ID">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Дата последнего пополнения</label>
+          <input type="date" name="esender_topup_date" class="form-control" value="{{ vehicle.esender_topup_date or '' }}">
+        </div>
+      </div>
+      <div class="form-group" style="max-width:200px">
+        <label class="form-label">Интервал (дней)</label>
+        <input type="number" name="esender_topup_days" class="form-control" value="{{ vehicle.esender_topup_days or 30 }}" min="1" max="365">
+      </div>
+
+      <hr class="divider">
+      <div class="form-group">
+        <label class="form-label">Примечания</label>
+        <textarea name="notes" class="form-control">{{ vehicle.notes or '' }}</textarea>
+      </div>
+      <div class="flex gap-8">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{{ url_for('vehicle_detail', vid=vehicle.id) }}" class="btn btn-ghost">Отмена</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
